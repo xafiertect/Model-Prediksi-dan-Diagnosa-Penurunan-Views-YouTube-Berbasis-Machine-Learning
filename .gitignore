@@ -21,6 +21,10 @@ update_qiqi_nb.py
 *.pkl
 *.joblib
 
+# macOS
+.DS_Store
+**/.DS_Store
+
 # Agents
 .agents/
 rules/
