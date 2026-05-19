@@ -29,3 +29,6 @@ update_qiqi_nb.py
 .agents/
 rules/
 generate_notebook.py
+
+# Scratch
+scratch/
