@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@config "../../tailwind.config.js";
+
+@layer base {
+  :root {
+    /* Brand Colors */
+    --color-primary: #FF6B35;
+    --color-primary-dark: #E55A28;
+    --color-primary-light: #FF8C5A;
+
+    --color-secondary: #1A1A2E;
+    --color-secondary-mid: #16213E;
+    --color-secondary-light: #0F3460;
+
+    --color-accent-gold: #FFD700;
+    --color-accent-red: #E94560;
+    --color-accent-teal: #4ECDC4;
+
+    /* Neutrals */
+    --color-surface: #1E1E2E;
+    --color-surface-elevated: #252540;
+    --color-border: rgba(255, 107, 53, 0.15);
+    --color-text-primary: #F0F0F8;
+    --color-text-secondary: #A0A0B8;
+    --color-text-muted: #606080;
+
+    /* Spacing */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 40px;
+    --space-2xl: 64px;
+
+    /* Border Radius */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-full: 9999px;
+
+    /* Shadows */
+    --shadow-glow: 0 0 20px rgba(255, 107, 53, 0.3);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --shadow-elevated: 0 8px 40px rgba(0, 0, 0, 0.6);
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+    --transition-slow: 400ms ease;
+  }
+
+  body {
+    @apply bg-secondary text-[var(--color-text-primary)] font-body antialiased;
+  }
+}

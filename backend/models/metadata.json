@@ -1,0 +1,11 @@
+{
+    "trained_at": "2026-05-19T15:56:59.286953",
+    "accuracy": 0.95,
+    "features": [
+        "views",
+        "ctr",
+        "impressions",
+        "avg_view_duration",
+        "engagement_rate"
+    ]
+}

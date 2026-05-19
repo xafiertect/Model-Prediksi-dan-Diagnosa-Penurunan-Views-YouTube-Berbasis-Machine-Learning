@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from dotenv import load_dotenv
 
-from routers import predict, history, stats
+from routers import predict, history, stats, analytics, chat, profile
 from schemas.prediction import ErrorResponse
 
 # Load environment variables
@@ -34,6 +34,9 @@ app.add_middleware(
 app.include_router(predict.router)
 app.include_router(history.router)
 app.include_router(stats.router)
+app.include_router(analytics.router)
+app.include_router(chat.router)
+app.include_router(profile.router)
 
 # Health Check Endpoint
 @app.get("/health", tags=["Health"])
