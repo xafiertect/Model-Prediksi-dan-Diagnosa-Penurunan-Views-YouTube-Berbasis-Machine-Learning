@@ -55,19 +55,22 @@ _load_drafts()
 
 THUMBNAIL_SYSTEM_PROMPT = """Anda adalah desainer thumbnail YouTube profesional dengan keahlian dalam metodologi Hippo Academy.
 Berikan saran desain thumbnail yang spesifik, actionable, dan terbukti meningkatkan CTR.
-Jawab dalam format JSON yang valid dengan field: main_element, background_color, text_overlay, facial_expression, composition_tip, color_palette.
-color_palette harus berupa array hex string seperti ["#FF4444", "#FFFFFF", "#1A1A2E"]."""
+Jawab HANYA dalam format JSON yang valid dengan field berikut (tidak ada teks lain di luar JSON):
+main_element, background_color, background_description, text_overlay, text_color, facial_expression, composition_tip, color_palette.
+color_palette harus berupa array hex string seperti ["#FF4444", "#FFFFFF", "#1A1A2E"].
+text_color harus berupa kode hex satu warna seperti "#FFDD00"."""
 
 
 @router.post("/thumbnail/suggest", response_model=ThumbnailSuggestion)
 async def suggest_thumbnail(request: ThumbnailRequest):
     """Generate rekomendasi desain thumbnail berbasis Gemini API."""
     try:
-        import google.generativeai as genai
+        from google import genai
+        from google.genai import types as genai_types
     except ImportError:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Library google-generativeai belum terinstall."
+            detail="Library google-genai belum terinstall. Jalankan: pip install google-genai"
         )
 
     api_key = os.getenv("GEMINI_API_KEY")
@@ -77,44 +80,72 @@ async def suggest_thumbnail(request: ThumbnailRequest):
             detail="GEMINI_API_KEY tidak ditemukan."
         )
 
+    # Konteks CTR untuk personalisasi saran
+    ctr_context = ""
+    if request.current_ctr is not None:
+        if request.current_ctr < 2.0:
+            ctr_context = f"\n- CTR Saat Ini: {request.current_ctr:.1f}% (RENDAH — desain harus sangat eye-catching dan kontroversial untuk mendorong klik)"
+        elif request.current_ctr < 4.0:
+            ctr_context = f"\n- CTR Saat Ini: {request.current_ctr:.1f}% (RATA-RATA — tingkatkan dengan elemen emosi dan teks yang lebih bold)"
+        else:
+            ctr_context = f"\n- CTR Saat Ini: {request.current_ctr:.1f}% (BAIK — pertahankan elemen yang bekerja, optimalkan warna dan komposisi)"
+
+    description_context = f"\n- Deskripsi Konten: {request.description}" if request.description else ""
+
     prompt = f"""Buat saran desain thumbnail YouTube untuk video berikut:
 - Judul: {request.video_title}
 - Tipe Konten: {request.content_type}
-- Target Audiens: {request.target_audience or 'Umum'}
+- Target Audiens: {request.target_audience or 'Umum'}{description_context}{ctr_context}
 
-Berikan output dalam format JSON valid sesuai schema berikut:
+Berikan output dalam format JSON valid sesuai schema berikut (semua field wajib diisi):
 {{
-  "main_element": "deskripsi elemen visual utama",
-  "background_color": "warna background (nama warna atau hex)",
-  "text_overlay": "teks overlay maksimal 5 kata",
-  "facial_expression": "deskripsi ekspresi wajah yang ideal",
-  "composition_tip": "tips komposisi layout spesifik",
+  "main_element": "deskripsi detail elemen visual utama (orang, objek, grafis)",
+  "background_color": "#HEX — warna dominan background",
+  "background_description": "deskripsi detail latar belakang: gradien, tekstur, suasana warna, efek visual",
+  "text_overlay": "teks overlay MAKSIMAL 5 kata, huruf kapital, impactful",
+  "text_color": "#HEX — warna teks yang kontras dan mudah dibaca",
+  "facial_expression": "deskripsi ekspresi wajah yang ideal untuk menarik klik",
+  "composition_tip": "tips komposisi layout spesifik: posisi objek, rule of thirds, focal point",
   "color_palette": ["#hex1", "#hex2", "#hex3"]
 }}"""
 
     try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            system_instruction=THUMBNAIL_SYSTEM_PROMPT,
-            generation_config={"response_mime_type": "application/json"}
+        client     = genai.Client(api_key=api_key)
+        model_name = os.getenv("GEMINI_LITE_MODEL", "gemini-2.0-flash-lite")
+        response   = client.models.generate_content(
+            model=model_name,
+            contents=prompt,
+            config=genai_types.GenerateContentConfig(
+                system_instruction=THUMBNAIL_SYSTEM_PROMPT,
+                response_mime_type="application/json",
+            ),
         )
-        response = model.generate_content(prompt)
         data = json.loads(response.text)
 
         return ThumbnailSuggestion(
             main_element=data.get("main_element", "Wajah presenter dengan ekspresi terkejut"),
             background_color=data.get("background_color", "#1A1A2E"),
+            background_description=data.get("background_description", "Dark navy gradient dengan partikel cahaya subtle di latar"),
             text_overlay=data.get("text_overlay", "RAHASIA TERUNGKAP!"),
-            facial_expression=data.get("facial_expression", "Terkejut, mulut terbuka sedikit"),
+            text_color=data.get("text_color", "#FFDD00"),
+            facial_expression=data.get("facial_expression", "Terkejut, mulut terbuka sedikit, mata lebar"),
             composition_tip=data.get("composition_tip", "Wajah di kiri, teks di kanan dengan Rule of Thirds"),
             color_palette=data.get("color_palette", ["#FF4444", "#FFFFFF", "#1A1A2E"]),
         )
     except Exception as e:
         logger.error(f"[Management] Thumbnail suggest error: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=f"Gemini API error: {str(e)}"
+        # Fallback dinamis profesional standar Hippo Academy jika API Gemini limit/error
+        title_summary = request.video_title[:30] + "..." if len(request.video_title) > 30 else request.video_title
+        ctr_note = f" CTR {request.current_ctr:.1f}%." if request.current_ctr else ""
+        return ThumbnailSuggestion(
+            main_element=f"Presenter menunjuk grafis visual menarik atau mockup terkait '{title_summary}'",
+            background_color="#1D1E2C",
+            background_description="Dark navy premium dengan gradien diagonal dari biru gelap ke hitam, efek particle cahaya putih subtle di sudut kanan atas",
+            text_overlay="TRIPEL VIEWS!",
+            text_color="#FFDD00",
+            facial_expression="Tersenyum antusias dengan pandangan fokus menatap audiens, ekspresi excited",
+            composition_tip=f"Gunakan Rule of Thirds. Presenter di sisi kanan 60% frame, teks bold di kiri dengan stroke putih tebal.{ctr_note}",
+            color_palette=["#FF0055", "#FFDD00", "#FFFFFF", "#1D1E2C"],
         )
 
 
