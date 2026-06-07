@@ -61,9 +61,11 @@ async def youtube_callback(code: str = "", state: str = "", error: str = ""):
     """Callback dari Google setelah user menyetujui OAuth."""
     global _oauth_state, _oauth_verifier
 
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+
     # Handle user rejection
     if error:
-        return RedirectResponse(url="http://localhost:5173/?yt_error=access_denied")
+        return RedirectResponse(url=f"{frontend_url}/?yt_error=access_denied")
 
     # Validasi CSRF state
     if not state or state != _oauth_state:
@@ -77,13 +79,13 @@ async def youtube_callback(code: str = "", state: str = "", error: str = ""):
         # Restore PKCE verifier
         if _oauth_verifier:
             flow.code_verifier = _oauth_verifier
-            
+
         flow.fetch_token(code=code)
         save_token(flow.credentials)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Gagal menukar token: {str(e)}")
 
-    return RedirectResponse(url="http://localhost:5173/?yt_connected=true")
+    return RedirectResponse(url=f"{frontend_url}/?yt_connected=true")
 
 
 @router.get("/youtube/status")
