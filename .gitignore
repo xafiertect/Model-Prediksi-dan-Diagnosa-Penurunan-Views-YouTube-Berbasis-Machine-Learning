@@ -38,6 +38,7 @@ notebooks/modelling/testing_fitur_wildan.ipynb
 # Excluded by user request
 docs/
 captonevenv/
+CLAUDE.md
 
 # OAuth Token — JANGAN di-commit!
 backend/token_store.json
