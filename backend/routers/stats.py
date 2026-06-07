@@ -302,13 +302,47 @@ async def get_videos_analytics(limit: int = 50):
             return "Tidak Viral"
 
         df["status"] = df.apply(derive_status, axis=1)
+        df["source"] = "csv"
+
+        # ── Gabung data YouTube live (youtube_live.csv) ──────────────────────
+        live_path = os.path.join(DATA_DIR, "youtube_live.csv")
+        if os.path.exists(live_path):
+            try:
+                live_df = pd.read_csv(live_path)
+                if not live_df.empty and "video_id" in live_df.columns:
+                    live_df["anomaly"] = (
+                        live_df["anomaly_label_model"].fillna(0).astype(int) == 1
+                        if "anomaly_label_model" in live_df.columns else False
+                    )
+                    live_df["anomaly_score"] = (
+                        live_df["anomaly_score"].fillna(0.0)
+                        if "anomaly_score" in live_df.columns else 0.0
+                    )
+                    live_df["views_predicted"] = live_df["views"]
+                    live_df["source"] = "youtube_live"
+
+                    def _live_status(row):
+                        if row.get("anomaly", False):
+                            return "Anomali"
+                        v = row.get("views", 0)
+                        if v >= 100_000: return "Viral"
+                        if v >= 20_000:  return "Normal"
+                        return "Tidak Viral"
+
+                    live_df["status"] = live_df.apply(_live_status, axis=1)
+
+                    # Live data mendahului CSV untuk video_id yang sama
+                    df = df[~df["video_id"].isin(live_df["video_id"])]
+                    df = pd.concat([live_df, df], ignore_index=True)
+            except Exception:
+                pass  # Jangan hentikan request jika live CSV rusak
 
         # Format output — sertakan semua field yang dibutuhkan untuk prediksi per-video
         out_cols = [
             "video_id", "title", "views", "ctr", "date", "status", "anomaly", "anomaly_score",
             "impressions", "avg_view_duration", "video_duration",
             "likes", "comments", "retention_rate", "subscriber_gained",
-            "lag_views_7d", "rolling_mean_14d", "video_age_days",
+            "lag_views_7d", "rolling_mean_14d", "video_age_days", "source",
         ]
         result = df[[c for c in out_cols if c in df.columns]]\
             .head(limit)\

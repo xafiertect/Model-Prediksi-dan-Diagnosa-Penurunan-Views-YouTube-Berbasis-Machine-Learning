@@ -8,6 +8,7 @@ Mengelola login, callback, status autentikasi, dan pengambilan data real-time ch
 import os
 import secrets
 
+import pandas as pd
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
 
@@ -18,6 +19,9 @@ from utils.youtube_oauth import (
 from utils.youtube_api import (
     fetch_channel_info, fetch_recent_videos, fetch_video_analytics
 )
+
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_LIVE_CSV = os.path.join(_PROJECT_ROOT, "data", "processed", "youtube_live.csv")
 
 router = APIRouter(prefix="/auth", tags=["YouTube OAuth"])
 
@@ -98,6 +102,99 @@ async def youtube_logout():
     """Hapus token OAuth — user harus login ulang untuk reconnect."""
     delete_token()
     return {"message": "Berhasil logout dari akun YouTube."}
+
+
+@router.post("/youtube/sync")
+async def sync_youtube_videos(max_videos: int = 20, include_analytics: bool = False):
+    """
+    Sinkronisasi video terbaru dari YouTube ke youtube_live.csv.
+    Data disimpan di data/processed/youtube_live.csv dan otomatis digabung
+    ke /stats/videos tanpa mengubah abis_cleaning.csv.
+    """
+    if not is_authenticated():
+        raise HTTPException(
+            status_code=401,
+            detail="Sesi YouTube telah habis. Silakan login ulang."
+        )
+
+    try:
+        channel = fetch_channel_info()
+        channel_id = channel.get("channel_id", "")
+        videos = fetch_recent_videos(max_results=max_videos)
+
+        if not videos:
+            return {"status": "ok", "synced": 0, "message": "Tidak ada video ditemukan di channel."}
+
+        rows = []
+        for v in videos:
+            analytics: dict = {}
+            if include_analytics:
+                try:
+                    analytics = fetch_video_analytics(v["video_id"], channel_id)
+                except Exception:
+                    pass
+
+            views = v["views"]
+            row = {
+                "video_id":          v["video_id"],
+                "title":             v["title"],
+                "views":             views,
+                "ctr":               analytics.get("ctr", 0.0),
+                "date":              v["published_at"],
+                "impressions":       analytics.get("impressions", 0),
+                "avg_view_duration": analytics.get("avg_view_duration", "00:03:00"),
+                "video_duration":    v["video_duration"],
+                "likes":             v["likes"],
+                "comments":          v["comments"],
+                "retention_rate":    analytics.get("retention_rate", 0.0),
+                "subscriber_gained": analytics.get("subscriber_gained", 0),
+                "lag_views_7d":      analytics.get("lag_views_7d", 0),
+                "rolling_mean_14d":  analytics.get("rolling_mean_views_14d", 0),
+                "video_age_days":    v["video_age_days"],
+                "anomaly_label_model": 0,
+                "anomaly_score":       0.0,
+                "source":            "youtube_live",
+            }
+            rows.append(row)
+
+        new_df = pd.DataFrame(rows)
+
+        if os.path.exists(_LIVE_CSV):
+            existing = pd.read_csv(_LIVE_CSV)
+            existing = existing[~existing["video_id"].isin(new_df["video_id"])]
+            merged = pd.concat([existing, new_df], ignore_index=True)
+        else:
+            os.makedirs(os.path.dirname(_LIVE_CSV), exist_ok=True)
+            merged = new_df
+
+        merged.to_csv(_LIVE_CSV, index=False)
+
+        return {
+            "status":         "ok",
+            "synced":         len(rows),
+            "total_in_cache": len(merged),
+            "channel":        channel.get("title", ""),
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Gagal sinkronisasi video: {str(e)}")
+
+
+@router.get("/youtube/sync/status")
+async def sync_status():
+    """Cek jumlah video yang tersimpan di youtube_live.csv."""
+    if not os.path.exists(_LIVE_CSV):
+        return {"cached": 0, "last_sync": None}
+    try:
+        df = pd.read_csv(_LIVE_CSV)
+        last_sync = None
+        if "date" in df.columns and not df.empty:
+            last_sync = str(df["date"].max())
+        return {"cached": len(df), "last_sync": last_sync}
+    except Exception:
+        return {"cached": 0, "last_sync": None}
 
 
 @router.get("/youtube/channel")

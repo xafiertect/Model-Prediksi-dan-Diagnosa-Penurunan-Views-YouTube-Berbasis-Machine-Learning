@@ -33,8 +33,10 @@ export const getVideoAnalytics  = (limit = 50) => api.get(`/stats/videos?limit=$
 export const getForecastData    = (limit = 30) => api.get(`/stats/forecast?limit=${limit}`);
 
 // ── YouTube OAuth (real-time channel integration) ─────────────────────────────
-export const getYouTubeStatus   = ()        => api.get('/auth/youtube/status');
-export const getYouTubeChannel  = (max = 20) => api.get(`/auth/youtube/channel?max_videos=${max}`);
-export const getVideoMetrics    = (videoId) => api.get(`/auth/youtube/video/${videoId}/metrics`);
-export const logoutYouTube      = ()        => api.get('/auth/youtube/logout');
+export const getYouTubeStatus      = ()                             => api.get('/auth/youtube/status');
+export const getYouTubeChannel     = (max = 20)                     => api.get(`/auth/youtube/channel?max_videos=${max}`);
+export const getVideoMetrics       = (videoId)                      => api.get(`/auth/youtube/video/${videoId}/metrics`);
+export const logoutYouTube         = ()                             => api.get('/auth/youtube/logout');
+export const syncYouTubeLive       = (max = 20, analytics = false)  => api.post(`/auth/youtube/sync?max_videos=${max}&include_analytics=${analytics}`);
+export const getSyncStatus         = ()                             => api.get('/auth/youtube/sync/status');
 

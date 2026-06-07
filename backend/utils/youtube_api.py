@@ -103,7 +103,8 @@ def fetch_recent_videos(max_results: int = 20) -> list[dict]:
     results = []
     for v in vids_resp.get("items", []):
         # Parse durasi ISO 8601 → HH:MM:SS
-        raw_duration = v["contentDetails"]["duration"]
+        # Beberapa video (live stream, Shorts, video diproses) mungkin tidak punya field duration
+        raw_duration = v.get("contentDetails", {}).get("duration", "PT0S")
         try:
             dur_sec = int(isodate.parse_duration(raw_duration).total_seconds())
         except Exception:
@@ -111,21 +112,21 @@ def fetch_recent_videos(max_results: int = 20) -> list[dict]:
         video_duration = _seconds_to_hhmmss(dur_sec)
 
         # Hitung usia video dalam hari dan jam
-        published_str = v["snippet"]["publishedAt"]
+        published_str = v.get("snippet", {}).get("publishedAt", datetime.now(timezone.utc).isoformat())
         published_dt = datetime.fromisoformat(published_str.replace("Z", "+00:00"))
         age_days = (datetime.now(timezone.utc) - published_dt).days
         age_hours = max(int((datetime.now(timezone.utc) - published_dt).total_seconds() / 3600), 1)
 
         results.append({
             "video_id": v["id"],
-            "title": v["snippet"]["title"],
-            "thumbnail": v["snippet"]["thumbnails"].get("medium", {}).get("url", ""),
+            "title": v.get("snippet", {}).get("title", ""),
+            "thumbnail": v.get("snippet", {}).get("thumbnails", {}).get("medium", {}).get("url", ""),
             "published_at": published_str,
             "video_age_days": age_days,
             "video_age_hours": age_hours,
-            "views": int(v["statistics"].get("viewCount", 0)),
-            "likes": int(v["statistics"].get("likeCount", 0)),
-            "comments": int(v["statistics"].get("commentCount", 0)),
+            "views": int(v.get("statistics", {}).get("viewCount", 0)),
+            "likes": int(v.get("statistics", {}).get("likeCount", 0)),
+            "comments": int(v.get("statistics", {}).get("commentCount", 0)),
             "video_duration": video_duration,
         })
 
