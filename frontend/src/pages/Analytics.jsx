@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getVideoAnalytics, getForecastData, predictPerformance, getYouTubeStatus, getYouTubeChannel } from '../services/api';
+import { getVideoAnalytics, getForecastData, predictPerformance, getYouTubeStatus, syncYouTubeLive } from '../services/api';
 import {
   Search, Filter, TrendingDown, TrendingUp, Minus, AlertTriangle, RefreshCw,
   Zap, X, Youtube, CheckCircle, XCircle,
@@ -349,18 +349,19 @@ export default function Analytics() {
     try {
       const statusRes = await getYouTubeStatus();
       if (!statusRes.data?.is_authenticated) {
-        setYtMsg({ type: 'info', text: 'Belum login YouTube. Buka /auth/youtube/login di backend untuk autentikasi.' });
+        setYtMsg({ type: 'info', text: 'Belum login YouTube. Hubungkan akun YouTube terlebih dahulu.' });
         return;
       }
-      const chRes = await getYouTubeChannel(10);
-      const ch = chRes.data;
-      const vCount = ch?.video_count || ch?.recent_videos?.length || '?';
-      setYtMsg({ type: 'ok', text: `Sinkronisasi berhasil · ${vCount} video terbaru dimuat dari YouTube` });
+      const syncRes = await syncYouTubeLive(20, false);
+      const { synced, total_in_cache, channel } = syncRes.data;
+      setYtMsg({ type: 'ok', text: `Sync berhasil · ${synced} video dari "${channel || 'channel Anda'}" disimpan (total cache: ${total_in_cache})` });
+      // Reload tabel agar video live langsung muncul di atas
+      fetchVideos();
     } catch (err) {
       setYtMsg({ type: 'err', text: `Sync gagal: ${err.message}` });
     } finally {
       setYtSyncing(false);
-      setTimeout(() => setYtMsg(null), 5000);
+      setTimeout(() => setYtMsg(null), 6000);
     }
   };
 
@@ -591,9 +592,21 @@ export default function Analytics() {
                             }}>🎬</div>
                           )}
                           <div style={{ overflow: 'hidden' }}>
-                            <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontWeight: 500, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {v.title || 'Video'}
-                            </span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {v.title || 'Video'}
+                              </span>
+                              {v.source === 'youtube_live' && (
+                                <span style={{
+                                  flexShrink: 0, fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.04em',
+                                  padding: '1px 6px', borderRadius: 4,
+                                  background: 'rgba(255,0,0,0.12)', color: '#FF4444',
+                                  border: '1px solid rgba(255,0,0,0.25)',
+                                }}>
+                                  LIVE
+                                </span>
+                              )}
+                            </div>
                             <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>{v.video_id}</span>
                           </div>
                         </div>
