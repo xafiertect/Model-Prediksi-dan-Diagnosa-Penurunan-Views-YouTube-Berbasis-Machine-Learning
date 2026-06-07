@@ -60,8 +60,6 @@ yarn-debug.log*
 yarn-error.log*
 *.log
 
+.claude
 
 
-
-
-# Claude Code config
