@@ -39,6 +39,8 @@ notebooks/modelling/testing_fitur_wildan.ipynb
 docs/
 captonevenv/
 CLAUDE.md
+.claude/
+*.png
 
 # OAuth Token — JANGAN di-commit!
 backend/token_store.json
@@ -63,4 +65,3 @@ yarn-error.log*
 
 
 # Claude Code config
-.claude/

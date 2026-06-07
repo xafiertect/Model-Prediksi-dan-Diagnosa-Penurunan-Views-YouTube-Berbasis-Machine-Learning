@@ -33,8 +33,9 @@ def load_all_models() -> None:
     """
     global _models, _is_loaded
 
-    model_dir  = os.getenv("MODEL_PATH",  "./models")
-    scaler_dir = os.getenv("SCALER_PATH", "./scalers")
+    _backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    model_dir  = os.getenv("MODEL_PATH",  os.path.join(_backend_dir, "models"))
+    scaler_dir = os.getenv("SCALER_PATH", os.path.join(_backend_dir, "scalers"))
 
     # ── Model 1: XGBoost Regression ──────────────────────────────────────────
     # Coba load versi multi-horizon dulu
@@ -71,9 +72,13 @@ def load_all_models() -> None:
     _models["scaler_m1"] = scaler_m1
 
     # ── Model 2: Prophet (optional) ───────────────────────────────────────────
-    _models["prophet"] = _try_load(os.path.join(model_dir, "model2_prophet_timeseries.pkl"))
+    try:
+        _models["prophet"] = _try_load(os.path.join(model_dir, "model2_prophet_timeseries.pkl"))
+    except Exception as e:
+        _models["prophet"] = None
+        logger.warning(f"[ModelLoader] Model 2 (Prophet) gagal dimuat ({e}) — endpoint /stats/forecast tidak aktif.")
     if _models["prophet"] is None:
-        logger.warning("[ModelLoader] Model 2 (Prophet) tidak ditemukan — endpoint /stats/forecast tidak aktif.")
+        logger.warning("[ModelLoader] Model 2 (Prophet) tidak tersedia.")
 
     # ── Model 3: Isolation Forest ─────────────────────────────────────────────
     iso = _try_load(os.path.join(model_dir, "model3_isolation_forest.pkl"))
@@ -85,7 +90,36 @@ def load_all_models() -> None:
     scaler_m3 = _try_load(os.path.join(scaler_dir, "scaler_model3.pkl"))
     _models["scaler_m3"] = scaler_m3
 
-    # ── Model Selected Features (opsional) ───────────────────────────────────
+    # ── Model 4: Decline Classifier ──────────────────────────────────────────
+    clf4 = _try_load(os.path.join(model_dir, "model4_decline_classifier.pkl"))
+    _models["decline_clf"] = clf4
+    if clf4 is None:
+        logger.warning("[ModelLoader] Model 4 (Decline Classifier) tidak ditemukan.")
+
+    scaler_m4 = _try_load(os.path.join(scaler_dir, "scaler_model4.pkl"))
+    _models["scaler_m4"] = scaler_m4
+
+    thr4 = _try_load(os.path.join(model_dir, "model4_threshold.pkl"))
+    _models["decline_threshold"] = thr4 if thr4 is not None else 0.5
+
+    # ── Model 5: Cox PH Survival (Viral Detection) ───────────────────────────
+    survival_model = _try_load(os.path.join(model_dir, "model5_viral_survival.pkl"))
+    _models["survival"] = survival_model
+    if survival_model is None:
+        logger.warning("[ModelLoader] Model 5 (Survival) tidak ditemukan — prediksi viral berbasis survival dinonaktifkan.")
+
+    survival_meta = _try_load(os.path.join(model_dir, "model5_metadata.pkl"))
+    _models["survival_meta"] = survival_meta
+
+    # Model 4 calibrated (opsional — lebih akurat untuk confidence score)
+    clf4_cal = _try_load(os.path.join(model_dir, "model4_decline_classifier_calibrated.pkl"))
+    _models["decline_clf_calibrated"] = clf4_cal
+
+    # Model 4 selected features
+    feats4 = _try_load(os.path.join(model_dir, "model4_selected_features.pkl"))
+    _models["model4_selected_features"] = feats4
+
+    # ── Selected Features (untuk reference) ──────────────────────────────────
     _models["selected_features"] = _try_load(
         os.path.join(model_dir, "model1_selected_features.pkl")
     )

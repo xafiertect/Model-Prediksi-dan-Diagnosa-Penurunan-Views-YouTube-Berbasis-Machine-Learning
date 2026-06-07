@@ -1,81 +1,77 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, BarChart2, MessageSquare, Layers } from 'lucide-react';
+import { Home, BarChart2, Video, Sparkles, Settings } from 'lucide-react';
 
-const navItems = [
-  { to: '/',           label: 'Dashboard',     icon: LayoutDashboard },
-  { to: '/analytics',  label: 'Analitik Video', icon: BarChart2 },
-  { to: '/consult',    label: 'AI Consultant',  icon: MessageSquare },
-  { to: '/management', label: 'Management',     icon: Layers },
-];
-
-export default function Sidebar() {
+export default function Sidebar({ theme, toggleTheme, onLogout }) {
   return (
-    <aside style={{
-      width: '240px',
-      minHeight: '100vh',
-      background: 'rgba(15,23,42,0.95)',
-      borderRight: '1px solid rgba(255,255,255,0.07)',
-      display: 'flex',
-      flexDirection: 'column',
-      padding: '1.5rem 1rem',
-      position: 'sticky',
-      top: 0,
-      backdropFilter: 'blur(16px)',
-      flexShrink: 0,
-    }}>
-      {/* Logo */}
-      <div style={{ marginBottom: '2.5rem', padding: '0 0.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: '10px',
-            background: 'linear-gradient(135deg, #06B6D4, #0891B2)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1.1rem', fontWeight: '800', color: '#000',
-          }}>H</div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#F8FAFC' }}>Hippo Academy</div>
-            <div style={{ fontSize: '0.7rem', color: '#64748B' }}>YouTube Analytics</div>
+    <>
+      {/* Top Header Navbar */}
+      <div className="nav-shell">
+        <nav className="nav glass glow">
+          <div className="brand">
+            <div className="brand-logo">H</div>
+            <div>
+              <div className="brand-name">Hippo Academy</div>
+              <div className="brand-sub">YouTube Analytics</div>
+            </div>
           </div>
-        </div>
+          
+          <div className="nav-links">
+            <a href="/" className="nlink">Home</a>
+            <a href="/dashboard" className="nlink">Dashboard</a>
+            <NavLink to="/analytics" className={({ isActive }) => `nlink ${isActive ? 'active' : ''}`}>Analitik Video</NavLink>
+            <NavLink to="/consult" className={({ isActive }) => `nlink ${isActive ? 'active' : ''}`}>AI Consultant</NavLink>
+            <NavLink to="/management" className={({ isActive }) => `nlink ${isActive ? 'active' : ''}`}>Management</NavLink>
+          </div>
+
+          <div className="nav-actions">
+            <button className="icon-btn" id="theme-toggle" onClick={toggleTheme} aria-label="Ganti tema">
+              {theme === 'dark' ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 19, height: 19 }}>
+                  <circle cx="12" cy="12" r="4.2"/>
+                  <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/>
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 19, height: 19 }}>
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              )}
+            </button>
+            
+            {onLogout && (
+              <button className="btn btn-danger" id="logout-btn" onClick={onLogout}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                <span className="label-hide">Keluar</span>
+              </button>
+            )}
+          </div>
+        </nav>
       </div>
 
-      {/* Nav Items */}
-      <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
-        {navItems.map(({ to, label, icon: Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={to === '/'}
-            style={({ isActive }) => ({
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '0.7rem 0.85rem',
-              borderRadius: '10px',
-              textDecoration: 'none',
-              fontWeight: isActive ? 600 : 400,
-              fontSize: '0.875rem',
-              color: isActive ? '#06B6D4' : '#94A3B8',
-              background: isActive ? 'rgba(6,182,212,0.1)' : 'transparent',
-              border: isActive ? '1px solid rgba(6,182,212,0.2)' : '1px solid transparent',
-              transition: 'all 0.2s ease',
-            })}
-            onMouseEnter={e => { if (!e.currentTarget.classList.contains('active')) e.currentTarget.style.color = '#CBD5E1'; }}
-            onMouseLeave={e => { if (!e.currentTarget.classList.contains('active')) e.currentTarget.style.color = '#94A3B8'; }}
-          >
-            <Icon size={17} />
-            {label}
-          </NavLink>
-        ))}
-      </nav>
-
-      {/* Footer */}
-      <div style={{ padding: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.06)', marginTop: '1rem' }}>
-        <div style={{ fontSize: '0.7rem', color: '#475569', textAlign: 'center', lineHeight: 1.6 }}>
-          Backend: <span style={{ color: '#06B6D4' }}>localhost:8000</span><br />
-          Model: XGBoost + Prophet
-        </div>
+      {/* Floating Bottom Nav Dock (Mobile only) */}
+      <div className="mobile-nav-shell">
+        <a href="/" className="mobile-link">
+          <Home size={20} />
+          <span>Home</span>
+        </a>
+        <a href="/dashboard" className="mobile-link">
+          <BarChart2 size={20} />
+          <span>Dashboard</span>
+        </a>
+        <NavLink to="/analytics" className={({ isActive }) => `mobile-link ${isActive ? 'active' : ''}`}>
+          <Video size={20} />
+          <span>Analitik</span>
+        </NavLink>
+        <NavLink to="/consult" className={({ isActive }) => `mobile-link ${isActive ? 'active' : ''}`}>
+          <Sparkles size={20} />
+          <span>Consultant</span>
+        </NavLink>
+        <NavLink to="/management" className={({ isActive }) => `mobile-link ${isActive ? 'active' : ''}`}>
+          <Settings size={20} />
+          <span>Management</span>
+        </NavLink>
       </div>
-    </aside>
+    </>
   );
 }

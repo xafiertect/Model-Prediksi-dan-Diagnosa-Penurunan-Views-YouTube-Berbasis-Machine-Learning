@@ -3,22 +3,29 @@ import { chatConsultation } from '../services/api';
 import { Send, Loader, Bot, User, ShieldAlert } from 'lucide-react';
 
 const PRESETS = [
-  'Bagaimana cara menaikkan CTR thumbnail?',
-  'Strategi hook 10 detik pertama yang efektif',
-  'Mengapa retensi video saya rendah?',
-  'Jam terbaik upload konten edukatif',
-  'Cara riset topik viral YouTube',
+  'Berapa % video channel ini yang viral dan kenapa?',
+  'Gimana cara kerja model prediksi views-nya?',
+  'CTR channel rata-rata berapa? Bagus atau enggak?',
+  'Strategi hook 30 detik pertama yang terbukti efektif',
+  'Video mana yang paling berisiko decline?',
+  'Cara riset topik yang punya potensi viral tinggi',
+  'Kenapa anomali bisa terjadi di channel ini?',
+  'Gimana cara nulis judul yang CTR-nya tinggi?',
 ];
 
-const OFF_TOPIC_KEYWORDS = ['saham', 'crypto', 'resep', 'cuaca', 'berita', 'politik', 'olahraga', 'game'];
+const HARD_BLOCK_PHRASES = [
+  'resep masakan', 'cara masak', 'cuaca hari ini', 'ramalan cuaca',
+  'harga saham', 'jadwal liga', 'skor bola', 'cara main game',
+];
 
-function isOffTopic(msg) {
-  return OFF_TOPIC_KEYWORDS.some(kw => msg.toLowerCase().includes(kw));
+function isHardOffTopic(msg) {
+  const lower = msg.toLowerCase();
+  return HARD_BLOCK_PHRASES.some(p => lower.includes(p));
 }
 
 export default function Consultation() {
   const [messages,  setMessages]  = useState([
-    { role: 'ai', text: 'Halo! Saya Hippo Assistant 🦛 — AI konsultan YouTube dari Hippo Academy. Tanyakan apa saja seputar strategi konten, CTR, retensi, atau analitik channel Anda!' }
+    { role: 'ai', text: 'Hei! Gue AI engineer yang ngebangun sistem analitik Hippo Academy ini.\n\nGue punya akses ke data lengkap: 2.356 video dianalisis, model XGBoost buat prediksi views, Isolation Forest buat deteksi anomali, plus semua output dari pipeline ML-nya.\n\nTanya apa aja — strategi konten, cara kerja modelnya, kenapa ada video yang anomali, atau gimana channel ini bisa lebih optimal.' }
   ]);
   const [input,    setInput]    = useState('');
   const [loading,  setLoading]  = useState(false);
@@ -33,11 +40,11 @@ export default function Consultation() {
     const msg = text || input.trim();
     if (!msg) return;
 
-    // Off-topic guardrail (client-side)
-    if (isOffTopic(msg)) {
+    // Hanya block topik yang benar-benar tidak relevan sama sekali
+    if (isHardOffTopic(msg)) {
       setMessages(prev => [...prev,
         { role: 'user', text: msg },
-        { role: 'system-warn', text: 'Pertanyaan di luar topik dibatasi oleh sistem. Silakan tanyakan seputar YouTube, strategi konten, atau analitik channel.' },
+        { role: 'system-warn', text: 'Itu di luar scope gue. Tanya yang nyambung ke konten, YouTube, atau data channel ya.' },
       ]);
       setInput('');
       return;
@@ -61,15 +68,15 @@ export default function Consultation() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 60px)', gap: '1rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 160px)', gap: '1rem' }}>
       {/* Header */}
       <div>
         <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: 4 }}>AI Consultant</h1>
-        <p style={{ color: '#64748B', fontSize: '0.875rem' }}>Hippo Academy Assistant — RAG powered by Gemini</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>AI Engineer — data channel, model ML, strategi konten · Powered by Gemini + RAG</p>
       </div>
 
       {/* Chat Area */}
-      <div className="glass-panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
+      <div className="glass-panel card-3d glow-cyan" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
         {/* Messages */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {messages.map((msg, i) => {
@@ -79,13 +86,13 @@ export default function Consultation() {
                 background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)',
                 borderRadius: 12, padding: '0.75rem 1rem',
               }}>
-                <ShieldAlert size={16} color="#EF4444" style={{ flexShrink: 0, marginTop: 2 }} />
-                <span style={{ fontSize: '0.85rem', color: '#FCA5A5' }}>{msg.text}</span>
+                <ShieldAlert size={16} color="var(--accent-red)" style={{ flexShrink: 0, marginTop: 2 }} />
+                <span style={{ fontSize: '0.85rem', color: 'var(--accent-red)' }}>{msg.text}</span>
               </div>
             );
 
             if (msg.role === 'error') return (
-              <div key={i} style={{ fontSize: '0.82rem', color: '#EF4444', padding: '0.5rem 0.75rem', background: 'rgba(239,68,68,0.08)', borderRadius: 8 }}>
+              <div key={i} style={{ fontSize: '0.82rem', color: 'var(--accent-red)', padding: '0.5rem 0.75rem', background: 'rgba(239,68,68,0.08)', borderRadius: 8 }}>
                 {msg.text}
               </div>
             );
@@ -96,22 +103,22 @@ export default function Consultation() {
                 {/* Avatar */}
                 <div style={{
                   width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-                  background: isUser ? 'rgba(6,182,212,0.2)' : 'rgba(30,41,59,0.8)',
-                  border: `1px solid ${isUser ? 'rgba(6,182,212,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                  background: isUser ? 'rgba(6,182,212,0.15)' : 'var(--bg-card)',
+                  border: `1px solid ${isUser ? 'rgba(6,182,212,0.3)' : 'var(--border-glass)'}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  {isUser ? <User size={15} color="#06B6D4" /> : <Bot size={15} color="#94A3B8" />}
+                  {isUser ? <User size={15} color="var(--accent-cyan)" /> : <Bot size={15} color="var(--text-muted)" />}
                 </div>
                 {/* Bubble */}
                 <div style={{
                   maxWidth: '72%',
-                  background: isUser ? 'rgba(6,182,212,0.12)' : 'rgba(30,41,59,0.7)',
-                  border: `1px solid ${isUser ? 'rgba(6,182,212,0.2)' : 'rgba(255,255,255,0.07)'}`,
+                  background: isUser ? 'rgba(6,182,212,0.08)' : 'var(--bg-card)',
+                  border: `1px solid ${isUser ? 'rgba(6,182,212,0.15)' : 'var(--border-glass)'}`,
                   borderRadius: isUser ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
                   padding: '0.75rem 1rem',
                   fontSize: '0.875rem',
                   lineHeight: 1.65,
-                  color: '#E2E8F0',
+                  color: 'var(--text-primary)',
                   whiteSpace: 'pre-wrap',
                 }}>
                   {msg.text}
@@ -121,12 +128,12 @@ export default function Consultation() {
           })}
           {loading && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Bot size={15} color="#94A3B8" />
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--bg-card)', border: '1px solid var(--border-glass)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Bot size={15} color="var(--text-muted)" />
               </div>
-              <div style={{ display: 'flex', gap: 5, padding: '0.6rem 1rem', background: 'rgba(30,41,59,0.7)', borderRadius: '4px 16px 16px 16px', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div style={{ display: 'flex', gap: 5, padding: '0.6rem 1rem', background: 'var(--bg-card)', borderRadius: '4px 16px 16px 16px', border: '1px solid var(--border-glass)' }}>
                 {[0,1,2].map(j => (
-                  <div key={j} style={{ width: 7, height: 7, borderRadius: '50%', background: '#06B6D4', animation: `bounce 1.2s ${j * 0.2}s infinite` }} />
+                  <div key={j} style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--accent-cyan)', animation: `bounce 1.2s ${j * 0.2}s infinite` }} />
                 ))}
               </div>
             </div>
@@ -134,11 +141,20 @@ export default function Consultation() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Preset Chips */}
-        <div style={{ padding: '0.75rem 1.5rem 0', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {/* Preset Chips (Scroll horizontally on mobile) */}
+        <div style={{
+          padding: '0.75rem 1.5rem 0.5rem',
+          borderTop: '1px solid var(--border-glass)',
+          display: 'flex',
+          gap: '8px',
+          overflowX: 'auto',
+          whiteSpace: 'nowrap',
+          scrollbarWidth: 'none', /* Firefox */
+          msOverflowStyle: 'none', /* IE 10+ */
+        }}>
           {PRESETS.map((p) => (
             <button key={p} className="btn-ghost" onClick={() => sendMessage(p)}
-              style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', borderRadius: 20 }}
+              style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', borderRadius: 20, flexShrink: 0 }}
             >
               {p}
             </button>
@@ -149,7 +165,7 @@ export default function Consultation() {
         <div style={{ padding: '1rem 1.5rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
           <input
             className="input-dark"
-            placeholder="Ketik pertanyaan seputar YouTube atau Hippo Academy..."
+            placeholder="Tanya soal data channel, model ML, strategi konten, atau apapun yang nyambung..."
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}

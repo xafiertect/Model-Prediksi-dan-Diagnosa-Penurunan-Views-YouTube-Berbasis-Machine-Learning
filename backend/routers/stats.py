@@ -11,7 +11,9 @@ from fastapi import APIRouter, HTTPException
 
 router = APIRouter(prefix="/stats", tags=["Statistics"])
 
-DATA_DIR = os.getenv("DATA_PROCESSED_PATH", "../data/processed")
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+DATA_DIR = os.getenv("DATA_PROCESSED_PATH", os.path.join(_PROJECT_ROOT, "data", "processed"))
+_CLEANED_DIR = os.path.join(_PROJECT_ROOT, "data", "cleaned")
 
 
 def _read_csv_safe(filename: str) -> pd.DataFrame:
@@ -57,7 +59,7 @@ async def get_stats():
 @router.get("/youtube-videos")
 async def get_youtube_videos(limit: int = 15):
     """Daftar video sampel dari abis_cleaning.csv untuk pengisian otomatis."""
-    csv_path = "../data/cleaned/abis_cleaning.csv"
+    csv_path = os.path.join(_CLEANED_DIR, "abis_cleaning.csv")
     if not os.path.exists(csv_path):
         return {"data": []}
     try:
@@ -85,7 +87,7 @@ async def sync_youtube_video(video_id_or_url: str):
                 video_id = match.group(1)
                 break
 
-    csv_path = "../data/cleaned/abis_cleaning.csv"
+    csv_path = os.path.join(_CLEANED_DIR, "abis_cleaning.csv")
     if not os.path.exists(csv_path):
         raise HTTPException(status_code=404, detail="Dataset abis_cleaning.csv tidak ditemukan.")
 
@@ -173,5 +175,182 @@ async def get_forecast(limit: int = 30):
         return {"data": [], "message": "Data forecast belum tersedia."}
 
     return {"data": forecast_df.tail(limit).to_dict(orient="records")}
+
+
+@router.get("/videos")
+async def get_videos_analytics(limit: int = 50):
+    """
+    Daftar lengkap video dengan status, CTR, anomaly flag, dan tanggal publish.
+    Menggabungkan abis_cleaning.csv + model_output_anomaly.csv + model_output_regression.csv.
+    """
+    base_path = os.path.join(_CLEANED_DIR, "abis_cleaning.csv")
+
+    if not os.path.exists(base_path):
+        return {"data": [], "message": "Data abis_cleaning.csv tidak tersedia."}
+
+    try:
+        base_df = pd.read_csv(base_path)
+        anomaly_df = _read_csv_safe("model_output_anomaly.csv")
+        regression_df = _read_csv_safe("model_output_regression.csv")
+
+        # Kolom base + semua kolom untuk prediksi ML
+        _pred_cols = [
+            "tayangan", "rata_rata_durasi_tonton", "durasi",
+            "suka", "komentar_ditambahkan", "persentase_penayangan_rata_rata",
+            "subscriber_yang_diperoleh", "ts1_views", "ts2_views",
+        ]
+        cols_needed = [c for c in [
+            "video_id", "judul_video", "waktu_publikasi_video", "tanggal_upload",
+            "penayangan_tak_dilewati", "penayangan",
+            "rasio_klik_tayang_dari_tayangan",
+            *_pred_cols,
+        ] if c in base_df.columns]
+        df = base_df[cols_needed].copy()
+
+        # Normalisasi kolom views
+        if "penayangan_tak_dilewati" in df.columns:
+            df["views"] = df["penayangan_tak_dilewati"].fillna(df.get("penayangan", 0)).fillna(0).astype(int)
+        elif "penayangan" in df.columns:
+            df["views"] = df["penayangan"].fillna(0).astype(int)
+        else:
+            df["views"] = 0
+
+        df["ctr"] = df["rasio_klik_tayang_dari_tayangan"].fillna(0.0).astype(float) if "rasio_klik_tayang_dari_tayangan" in df.columns else 0.0
+        df["date"] = df["waktu_publikasi_video"].fillna("").astype(str) if "waktu_publikasi_video" in df.columns else ""
+        df["title"] = df["judul_video"].fillna("Video").astype(str) if "judul_video" in df.columns else "Video"
+
+        # ── Prediction-ready fields ──────────────────────────────────────────
+        df["impressions"] = df["tayangan"].fillna(0).astype(int) if "tayangan" in df.columns else 0
+
+        # avg_view_duration: "0:03:37" → "00:03:37"
+        def _fmt_duration(raw):
+            s = str(raw) if raw and str(raw) not in ("nan", "None", "") else "00:03:00"
+            parts = s.split(":")
+            if len(parts) == 2:
+                return f"00:{parts[0].zfill(2)}:{parts[1].zfill(2)}"
+            if len(parts) == 3:
+                return f"{parts[0].zfill(2)}:{parts[1].zfill(2)}:{parts[2].zfill(2)}"
+            return "00:03:00"
+
+        if "rata_rata_durasi_tonton" in df.columns:
+            df["avg_view_duration"] = df["rata_rata_durasi_tonton"].apply(_fmt_duration)
+        else:
+            df["avg_view_duration"] = "00:03:00"
+
+        # video_duration: seconds float → "HH:MM:SS"
+        def _secs_to_hms(val):
+            try:
+                total = int(float(val))
+            except (ValueError, TypeError):
+                return "00:10:00"
+            h, rem = divmod(total, 3600)
+            m, s = divmod(rem, 60)
+            return f"{h:02d}:{m:02d}:{s:02d}"
+
+        if "durasi" in df.columns:
+            df["video_duration"] = df["durasi"].apply(_secs_to_hms)
+        else:
+            df["video_duration"] = "00:10:00"
+
+        df["likes"]             = df["suka"].fillna(0).astype(int)                          if "suka"                        in df.columns else 0
+        df["comments"]          = df["komentar_ditambahkan"].fillna(0).astype(int)           if "komentar_ditambahkan"         in df.columns else 0
+        df["retention_rate"]    = df["persentase_penayangan_rata_rata"].fillna(0.0).astype(float) if "persentase_penayangan_rata_rata" in df.columns else 0.0
+        df["subscriber_gained"] = df["subscriber_yang_diperoleh"].fillna(0).astype(int)     if "subscriber_yang_diperoleh"    in df.columns else 0
+        df["lag_views_7d"]      = df["ts1_views"].fillna(0).astype(float)                   if "ts1_views"                   in df.columns else 0.0
+        df["rolling_mean_14d"]  = df["ts2_views"].fillna(0).astype(float)                   if "ts2_views"                   in df.columns else 0.0
+
+        # video_age_days dari tanggal_upload
+        date_col = "tanggal_upload" if "tanggal_upload" in df.columns else \
+                   ("waktu_publikasi_video" if "waktu_publikasi_video" in df.columns else None)
+        if date_col:
+            dates = pd.to_datetime(df[date_col], errors="coerce")
+            today = pd.Timestamp.now(tz=None)
+            df["video_age_days"] = (today - dates.dt.tz_localize(None)).dt.days.fillna(30).astype(int).clip(lower=1)
+        else:
+            df["video_age_days"] = 30
+
+        # Gabung dengan anomaly data
+        if not anomaly_df.empty and "video_id" in anomaly_df.columns and "anomaly_label_model" in anomaly_df.columns:
+            df = df.merge(anomaly_df[["video_id", "anomaly_label_model", "anomaly_score"]],
+                          on="video_id", how="left")
+        else:
+            df["anomaly_label_model"] = 0
+            df["anomaly_score"] = 0.0
+
+        df["anomaly"] = df["anomaly_label_model"].fillna(0).astype(int) == 1
+
+        # Gabung dengan regression output untuk views_predicted
+        if not regression_df.empty and "video_id" in regression_df.columns and "views_predicted" in regression_df.columns:
+            df = df.merge(regression_df[["video_id", "views_predicted"]], on="video_id", how="left")
+            df["views_predicted"] = df["views_predicted"].fillna(df["views"])
+        else:
+            df["views_predicted"] = df["views"]
+
+        # Tentukan status berdasarkan views absolut + anomaly model output.
+        # Threshold berbasis distribusi dataset Hippo Academy (mean 42k, p75 37k):
+        #   Anomali   : terdeteksi IsolationForest (anomaly_label_model = 1)
+        #   Viral     : views >= 100.000
+        #   Normal    : 20.000 <= views < 100.000
+        #   Tidak Viral: views < 20.000
+        def derive_status(row):
+            if row["anomaly"]:
+                return "Anomali"
+            if row["views"] >= 100_000:
+                return "Viral"
+            if row["views"] >= 20_000:
+                return "Normal"
+            return "Tidak Viral"
+
+        df["status"] = df.apply(derive_status, axis=1)
+        df["source"] = "csv"
+
+        # ── Gabung data YouTube live (youtube_live.csv) ──────────────────────
+        live_path = os.path.join(DATA_DIR, "youtube_live.csv")
+        if os.path.exists(live_path):
+            try:
+                live_df = pd.read_csv(live_path)
+                if not live_df.empty and "video_id" in live_df.columns:
+                    live_df["anomaly"] = (
+                        live_df["anomaly_label_model"].fillna(0).astype(int) == 1
+                        if "anomaly_label_model" in live_df.columns else False
+                    )
+                    live_df["anomaly_score"] = (
+                        live_df["anomaly_score"].fillna(0.0)
+                        if "anomaly_score" in live_df.columns else 0.0
+                    )
+                    live_df["views_predicted"] = live_df["views"]
+                    live_df["source"] = "youtube_live"
+
+                    def _live_status(row):
+                        if row.get("anomaly", False):
+                            return "Anomali"
+                        v = row.get("views", 0)
+                        if v >= 100_000: return "Viral"
+                        if v >= 20_000:  return "Normal"
+                        return "Tidak Viral"
+
+                    live_df["status"] = live_df.apply(_live_status, axis=1)
+
+                    # Live data mendahului CSV untuk video_id yang sama
+                    df = df[~df["video_id"].isin(live_df["video_id"])]
+                    df = pd.concat([live_df, df], ignore_index=True)
+            except Exception:
+                pass  # Jangan hentikan request jika live CSV rusak
+
+        # Format output — sertakan semua field yang dibutuhkan untuk prediksi per-video
+        out_cols = [
+            "video_id", "title", "views", "ctr", "date", "status", "anomaly", "anomaly_score",
+            "impressions", "avg_view_duration", "video_duration",
+            "likes", "comments", "retention_rate", "subscriber_gained",
+            "lag_views_7d", "rolling_mean_14d", "video_age_days", "source",
+        ]
+        result = df[[c for c in out_cols if c in df.columns]]\
+            .head(limit)\
+            .to_dict(orient="records")
+
+        return {"data": result, "total": len(df)}
+
+    except Exception as e:
+        return {"data": [], "error": str(e), "message": "Gagal memuat data video analytics."}
 
 
