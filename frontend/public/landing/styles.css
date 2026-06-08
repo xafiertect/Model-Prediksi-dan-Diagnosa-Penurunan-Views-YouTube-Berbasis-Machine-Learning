@@ -191,17 +191,199 @@ section { position: relative; }
   border-radius: 22px;
 }
 .brand { display: flex; align-items: center; gap: 13px; }
-.brand-logo {
-  width: 44px; height: 44px; border-radius: 13px; flex-shrink: 0;
-  display: grid; place-items: center;
-  font-family: var(--font-display); font-weight: 800; font-size: 22px; color: #fff;
-  background: linear-gradient(145deg, var(--accent-sky), var(--accent-blue));
-  box-shadow: 0 8px 22px -8px var(--accent-cyan), inset 0 1px 0 rgba(255,255,255,0.5);
+/* Animated Logo - Pink/Peach Theme */
+.brand-logo-anim {
+  width: 46px;
+  height: 46px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-.brand-logo::after {
-  content:""; position:absolute; inset:0; border-radius:inherit;
-  border:1px solid rgba(255,255,255,0.45);
+.brand-logo-sm {
+  width: 36px;
+  height: 36px;
+}
+.logo-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, #ff7a59, #f0468b) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  opacity: 0.8;
+}
+.logo-ring-1 {
+  animation: spin-clockwise 8s linear infinite;
+}
+.logo-ring-2 {
+  inset: 4px;
+  animation: spin-counter-clockwise 6s linear infinite;
+  opacity: 0.6;
+}
+.logo-ring-3 {
+  inset: 8px;
+  animation: pulse-ring 3s ease-in-out infinite;
+  opacity: 0.4;
+}
+.logo-letter {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 20px;
+  color: #fff;
+  z-index: 2;
+  text-shadow: 0 2px 10px rgba(240, 70, 139, 0.4);
+  background: linear-gradient(135deg, #fff, #ffb199);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.brand-logo-sm .logo-letter {
+  font-size: 16px;
+}
+.brand-logo-sm .logo-ring-2 {
+  inset: 3px;
+}
+.brand-logo-sm .logo-ring-3 {
+  display: none;
+}
+
+@keyframes spin-clockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes spin-counter-clockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+@keyframes pulse-ring {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.1); opacity: 0.6; }
+}
+
+/* Plain Language Benefit Pills */
+.benefit-pills {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 960px;
+  margin: 40px auto 10px;
+  text-align: left;
+}
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--card-shadow);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.pill:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--card-shadow), var(--glow-shadow);
+}
+.pill-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.pill-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-strong);
+}
+.pill-sub {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Social Proof Bar */
+.proof-bar {
+  padding: 40px 0 20px;
+}
+.proof-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 40px;
+  box-shadow: var(--card-shadow);
+}
+.proof-item {
+  text-align: center;
+  flex: 1;
+}
+.proof-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(24px, 3.2vw, 36px);
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1.1;
+}
+.proof-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 6px;
+}
+.proof-divider {
+  width: 1px;
+  height: 48px;
+  background: var(--glass-hairline);
+  opacity: 0.6;
+}
+
+/* CTA Logo Style */
+.cta-logo {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cta-logo-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  background: linear-gradient(135deg, #ff7a59, #f0468b) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+}
+.cta-logo-ring.r1 {
+  animation: spin-clockwise 12s linear infinite;
+}
+.cta-logo-ring.r2 {
+  inset: 8px;
+  animation: spin-counter-clockwise 8s linear infinite;
+  opacity: 0.7;
+}
+.cta-logo-letter {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 36px;
+  color: #fff;
+  z-index: 2;
+  text-shadow: 0 4px 15px rgba(240, 70, 139, 0.45);
+  background: linear-gradient(135deg, #fff, #ffb199);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .brand-name { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--text-strong); line-height: 1.1; letter-spacing: -0.01em; }
 .brand-sub { font-size: 12px; color: var(--text-muted); font-weight: 500; }
