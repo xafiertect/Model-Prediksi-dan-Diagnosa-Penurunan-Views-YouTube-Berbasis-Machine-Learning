@@ -29,12 +29,11 @@
 <div class="nav-shell">
   <nav class="nav glass glow" data-screen-label="Navbar">
     <div class="brand">
-      <!-- Animated Logo -->
-      <div class="brand-logo-anim" id="brand-logo-anim" aria-label="Hippo Academy Logo">
-        <div class="logo-ring logo-ring-1"></div>
-        <div class="logo-ring logo-ring-2"></div>
-        <div class="logo-ring logo-ring-3"></div>
-        <div class="logo-letter">H</div>
+      <!-- Animated Square Logo -->
+      <div class="brand-logo-anim brand-logo-sm" aria-label="Hippo Academy Logo">
+        <div class="logo-square">
+          <span class="logo-letter-sm">H</span>
+        </div>
       </div>
       <div>
         <div class="brand-name">Hippo Academy</div>
@@ -54,6 +53,16 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero wrap" data-screen-label="Hero">
+  <!-- Large Centered Animated Logo -->
+  <div class="hero-logo-container reveal">
+    <div class="hero-logo-glow"></div>
+    <div class="hero-logo-card">
+      <span class="logo-h">H</span>
+    </div>
+    <div class="hero-logo-ring ring-outer"></div>
+    <div class="hero-logo-ring ring-inner"></div>
+  </div>
+
   <div class="hero-badge reveal">
     <span class="dot"></span>
     Lebih dari 2.356 video telah dianalisis · AI aktif
@@ -61,27 +70,38 @@
   <h1 class="reveal">Views YouTube Kamu <span class="grad">Turun?</span><br>Kami Tahu Kenapa.</h1>
   <p class="lead reveal">Hippo Academy membaca data channel kamu, mendeteksi pola penurunan yang tidak wajar, dan langsung memberi tahu apa yang harus dilakukan — <strong>seperti dokter untuk channel YouTube-mu.</strong></p>
 
-  <!-- Plain language benefit pills -->
-  <div class="benefit-pills reveal">
-    <div class="pill">
-      <span class="pill-icon">🔍</span>
-      <div>
-        <div class="pill-title">Deteksi otomatis</div>
-        <div class="pill-sub">Tahu kapan views drop sebelum terlambat</div>
+  <!-- Premium Benefits Grid -->
+  <div class="benefits-grid reveal">
+    <!-- Card 1 -->
+    <div class="benefit-card glow-cyan-soft">
+      <div class="benefit-icon-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="benefit-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </div>
+      <div class="benefit-info">
+        <h4>Deteksi Otomatis</h4>
+        <p>Tahu kapan views drop sebelum terlambat. Isolation Forest langsung melacak anomali penayangan secara real-time.</p>
       </div>
     </div>
-    <div class="pill">
-      <span class="pill-icon">📈</span>
-      <div>
-        <div class="pill-title">Prediksi 30 hari</div>
-        <div class="pill-sub">Lihat ke mana tren channel kamu akan pergi</div>
+    
+    <!-- Card 2 -->
+    <div class="benefit-card glow-gold-soft">
+      <div class="benefit-icon-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="benefit-icon"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+      </div>
+      <div class="benefit-info">
+        <h4>Prediksi 30 Hari</h4>
+        <p>Lihat ke mana tren channel kamu akan pergi. Proyeksi Prophet mendeteksi seasonality bulanan dan tahunan.</p>
       </div>
     </div>
-    <div class="pill">
-      <span class="pill-icon">🤖</span>
-      <div>
-        <div class="pill-title">Konsultan AI</div>
-        <div class="pill-sub">Tanya strategi, dapat jawaban berbasis data nyata</div>
+    
+    <!-- Card 3 -->
+    <div class="benefit-card glow-purple-soft">
+      <div class="benefit-icon-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="benefit-icon"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      </div>
+      <div class="benefit-info">
+        <h4>Konsultan AI</h4>
+        <p>Tanya strategi pemulihan langsung. Gemini RAG menjawab spesifik sesuai kondisi dan kelemahan channel-mu.</p>
       </div>
     </div>
   </div>
@@ -249,9 +269,7 @@
 <section class="cta-band wrap" data-screen-label="CTA">
   <div class="cta-card reveal">
     <div class="cta-logo">
-      <div class="cta-logo-ring r1"></div>
-      <div class="cta-logo-ring r2"></div>
-      <div class="cta-logo-letter">H</div>
+      <div class="cta-logo-square">H</div>
     </div>
     <h2>Siap tahu kenapa views kamu turun?</h2>
     <p>Sambungkan channel Hippo Academy kamu dan dapatkan diagnosis lengkap dalam hitungan detik — tidak perlu keahlian teknis apapun.</p>
@@ -270,9 +288,9 @@
     <div class="foot-brand">
       <div class="brand">
         <div class="brand-logo-anim brand-logo-sm">
-          <div class="logo-ring logo-ring-1"></div>
-          <div class="logo-ring logo-ring-2"></div>
-          <div class="logo-letter">H</div>
+          <div class="logo-square">
+            <span class="logo-letter-sm">H</span>
+          </div>
         </div>
         <div>
           <div class="brand-name">Hippo Academy</div>

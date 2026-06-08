@@ -205,50 +205,84 @@ section { position: relative; }
   width: 36px;
   height: 36px;
 }
-.logo-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #ff7a59, #f0468b) border-box;
-  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: destination-out;
-  mask-composite: exclude;
-  opacity: 0.8;
+.brand-logo-sm .logo-square {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #ff7a59, #f0468b);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(240, 70, 139, 0.3);
+  transition: transform 0.3s;
 }
-.logo-ring-1 {
-  animation: spin-clockwise 8s linear infinite;
+.brand-logo-sm:hover .logo-square {
+  transform: rotate(8deg) scale(1.05);
 }
-.logo-ring-2 {
-  inset: 4px;
-  animation: spin-counter-clockwise 6s linear infinite;
-  opacity: 0.6;
-}
-.logo-ring-3 {
-  inset: 8px;
-  animation: pulse-ring 3s ease-in-out infinite;
-  opacity: 0.4;
-}
-.logo-letter {
+.logo-letter-sm {
   font-family: var(--font-display);
-  font-weight: 900;
+  font-weight: 800;
   font-size: 20px;
   color: #fff;
-  z-index: 2;
-  text-shadow: 0 2px 10px rgba(240, 70, 139, 0.4);
-  background: linear-gradient(135deg, #fff, #ffb199);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
-.brand-logo-sm .logo-letter {
-  font-size: 16px;
+
+/* Hero Center Large Logo */
+.hero-logo-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
-.brand-logo-sm .logo-ring-2 {
-  inset: 3px;
+.hero-logo-card {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, #ff7a59, #f0468b);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 30px rgba(240, 70, 139, 0.45);
+  z-index: 5;
+  animation: float-logo 4s ease-in-out infinite;
 }
-.brand-logo-sm .logo-ring-3 {
-  display: none;
+.logo-h {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 38px;
+  color: #fff;
+}
+.hero-logo-glow {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  background: radial-gradient(circle, rgba(240, 70, 139, 0.4) 0%, transparent 70%);
+  filter: blur(8px);
+  z-index: 1;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+.hero-logo-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 122, 89, 0.25);
+  pointer-events: none;
+}
+.ring-outer {
+  width: 110px;
+  height: 110px;
+  border-style: dashed;
+  animation: spin-clockwise 20s linear infinite;
+}
+.ring-inner {
+  width: 90px;
+  height: 90px;
+  border-style: double;
+  border-width: 3px;
+  border-color: rgba(240, 70, 139, 0.18) transparent;
+  animation: spin-counter-clockwise 10s linear infinite;
 }
 
 @keyframes spin-clockwise {
@@ -259,49 +293,76 @@ section { position: relative; }
   from { transform: rotate(0deg); }
   to { transform: rotate(-360deg); }
 }
-@keyframes pulse-ring {
-  0%, 100% { transform: scale(1); opacity: 0.3; }
-  50% { transform: scale(1.1); opacity: 0.6; }
+@keyframes float-logo {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+@keyframes pulse-glow {
+  0%, 100% { transform: scale(0.9); opacity: 0.5; }
+  50% { transform: scale(1.15); opacity: 0.8; }
 }
 
-/* Plain Language Benefit Pills */
-.benefit-pills {
+/* Premium Benefits Grid */
+.benefits-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  max-width: 960px;
-  margin: 40px auto 10px;
+  gap: 24px;
+  max-width: 1080px;
+  margin: 50px auto 20px;
   text-align: left;
 }
-.pill {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
+.benefit-card {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
+  border-radius: 20px;
+  padding: 28px 24px;
   box-shadow: var(--card-shadow);
-  transition: transform 0.25s, box-shadow 0.25s;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
-.pill:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--card-shadow), var(--glow-shadow);
+.benefit-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent-cyan);
 }
-.pill-icon {
-  font-size: 24px;
-  flex-shrink: 0;
+.benefit-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 122, 89, 0.1);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(255, 122, 89, 0.2);
 }
-.pill-title {
+.benefit-icon {
+  width: 22px;
+  height: 22px;
+}
+.benefit-info h4 {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 15px;
+  font-size: 17px;
   color: var(--text-strong);
+  margin-bottom: 8px;
 }
-.pill-sub {
-  font-size: 12.5px;
+.benefit-info p {
+  font-size: 13.5px;
   color: var(--text-muted);
-  margin-top: 2px;
+  line-height: 1.6;
+}
+
+/* Soft Glow helper styles for benefits */
+.glow-cyan-soft:hover {
+  box-shadow: 0 20px 40px -15px rgba(255, 122, 89, 0.2), 0 0 25px rgba(255, 122, 89, 0.1);
+}
+.glow-gold-soft:hover {
+  box-shadow: 0 20px 40px -15px rgba(245, 158, 11, 0.2), 0 0 25px rgba(245, 158, 11, 0.1);
+}
+.glow-purple-soft:hover {
+  box-shadow: 0 20px 40px -15px rgba(240, 70, 139, 0.2), 0 0 25px rgba(240, 70, 139, 0.1);
 }
 
 /* Social Proof Bar */
@@ -347,43 +408,24 @@ section { position: relative; }
 
 /* CTA Logo Style */
 .cta-logo {
-  width: 80px;
-  height: 80px;
-  position: relative;
-  margin: 0 auto 24px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+}
+.cta-logo-square {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #ff7a59, #f0468b);
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.cta-logo-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 3px solid transparent;
-  background: linear-gradient(135deg, #ff7a59, #f0468b) border-box;
-  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: destination-out;
-  mask-composite: exclude;
-}
-.cta-logo-ring.r1 {
-  animation: spin-clockwise 12s linear infinite;
-}
-.cta-logo-ring.r2 {
-  inset: 8px;
-  animation: spin-counter-clockwise 8s linear infinite;
-  opacity: 0.7;
-}
-.cta-logo-letter {
   font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 36px;
+  font-weight: 800;
+  font-size: 34px;
   color: #fff;
-  z-index: 2;
-  text-shadow: 0 4px 15px rgba(240, 70, 139, 0.45);
-  background: linear-gradient(135deg, #fff, #ffb199);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  box-shadow: 0 10px 24px rgba(240, 70, 139, 0.4);
+  animation: float-logo 4s ease-in-out infinite;
 }
 .brand-name { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--text-strong); line-height: 1.1; letter-spacing: -0.01em; }
 .brand-sub { font-size: 12px; color: var(--text-muted); font-weight: 500; }
