@@ -257,6 +257,7 @@ async def predict_performance(input_data: PredictionInput):
 
             if p24 >= 0.65:
                 s_status = "Viral"
+                s_conf   = p24
             elif p24 >= 0.35:
                 s_status = "Normal"
                 s_conf   = p24
@@ -270,7 +271,7 @@ async def predict_performance(input_data: PredictionInput):
                 viral_prob_48h=p48,
                 status=s_status,
                 confidence=s_conf,
-                viral_ratio=round(s_feats['viral_ratio'], 4),
+                viral_ratio=round(m5_dict['viral_ratio'], 4),
             )
     except Exception:
         pass

@@ -9,9 +9,10 @@ WORKDIR /app/backend
 # user non-root buat keamanan
 RUN useradd -m -u 1000 appuser
 
-# requirements.txt sekarang dikonsolidasikan di root (lihat CLAUDE.md/.gitignore
-# history) — backend/requirements.txt sudah tidak ada di branch ini.
-COPY requirements.txt .
+# Pakai backend/requirements.txt (subset runtime-only, tanpa jupyter/matplotlib/
+# seaborn yang cuma dipakai notebook) — image jadi jauh lebih kecil & build lebih
+# cepat dibanding root requirements.txt yang juga mencakup dev/notebook deps.
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/ .
