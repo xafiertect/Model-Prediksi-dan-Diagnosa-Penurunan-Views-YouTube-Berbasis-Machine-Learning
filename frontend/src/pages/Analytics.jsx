@@ -165,7 +165,7 @@ function PredictModal({ video, result, onClose }) {
               {video.title || 'Video'}
             </p>
             <p style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: 2 }}>
-              Prediksi Views · XGBoost + Isolation Forest
+              Perkiraan Penonton & Analisis Performa
             </p>
           </div>
         </div>
@@ -209,13 +209,13 @@ function PredictModal({ video, result, onClose }) {
             background: 'var(--bg-card)', borderRadius: 10, padding: '0.75rem',
             border: `1px solid ${anomaly?.is_anomaly ? 'rgba(239,68,68,0.3)' : 'var(--border-glass)'}`,
           }}>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: 4 }}>Anomali</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: 4 }}>Pola Performa</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               {anomaly?.is_anomaly
                 ? <XCircle size={14} color="var(--accent-red)" />
                 : <CheckCircle size={14} color="var(--accent-green)" />}
               <span style={{ fontSize: '0.82rem', fontWeight: 700, color: anomaly?.is_anomaly ? 'var(--accent-red)' : 'var(--accent-green)' }}>
-                {anomaly?.label || 'Normal'}
+                {anomaly?.is_anomaly ? 'Pola Tidak Biasa' : 'Normal'}
               </span>
             </div>
           </div>
@@ -461,7 +461,7 @@ export default function Analytics() {
                       : sourceFilter === 'csv' 
                         ? 'di dataset sampel' 
                         : 'di total database'
-                  } · ${anomalyCount > 0 ? `⚠️ ${anomalyCount} anomali` : 'Tidak ada anomali'}`
+                  } · ${anomalyCount > 0 ? `⚠️ ${anomalyCount} performa unik` : 'Semua performa normal'}`
             }
           </p>
         </div>
@@ -527,7 +527,7 @@ export default function Analytics() {
         <KpiCard loading={loading} label="🚀 Video Viral"   value={viralCount}      color="var(--accent-cyan)" bg="rgba(255,122,89,0.07)"  pct={pct(viralCount)} glowClass="glow-cyan" />
         <KpiCard loading={loading} label="📊 Video Normal"  value={normalCount}     color="var(--accent-gold)" bg="rgba(245,158,11,0.07)" pct={pct(normalCount)} glowClass="glow-gold" />
         <KpiCard loading={loading} label="📉 Tidak Viral"   value={tidakViralCount} color="var(--accent-red)" bg="rgba(239,68,68,0.07)"  pct={pct(tidakViralCount)} glowClass="glow-red" />
-        <KpiCard loading={loading} label="⚠️ Anomali"       value={anomalyCount}    color="#A78BFA" bg="rgba(167,139,250,0.07)" pct={pct(anomalyCount)} glowClass="glow-purple" />
+        <KpiCard loading={loading} label="⚠️ Performa Unik"   value={anomalyCount}    color="#A78BFA" bg="rgba(167,139,250,0.07)" pct={pct(anomalyCount)} glowClass="glow-purple" />
       </div>
 
       {/* ── Error Banner ──────────────────────────────────────────────────────── */}
@@ -541,8 +541,8 @@ export default function Analytics() {
       {/* ── Prophet Forecast ──────────────────────────────────────────────────── */}
       <div className="glass-panel glow-cyan" style={{ padding: '1.25rem 1.5rem' }}>
         <div style={{ marginBottom: '1rem' }}>
-          <h2 style={{ fontSize: '1rem', fontWeight: 700 }}>Forecast Views — Prophet Model</h2>
-          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>30 hari ke depan · Area abu-abu = confidence interval 95%</p>
+          <h2 style={{ fontSize: '1rem', fontWeight: 700 }}>Prediksi Tren Penonton</h2>
+          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Rencana arah tren penonton untuk 30 hari ke depan</p>
         </div>
         <ForecastChart />
       </div>
@@ -567,7 +567,7 @@ export default function Analytics() {
             { key: 'Viral',       label: `🚀 Viral (${viralCount})` },
             { key: 'Normal',      label: `📊 Normal (${normalCount})` },
             { key: 'Tidak Viral', label: `📉 Tidak Viral (${tidakViralCount})` },
-            { key: 'Anomali',     label: `⚠️ Anomali (${anomalyCount})` },
+            { key: 'Anomali',     label: `⚠️ Performa Unik (${anomalyCount})` },
           ].map(({ key, label }) => (
             <button
               key={key}
@@ -602,7 +602,7 @@ export default function Analytics() {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--border-glass)', background: 'var(--bg-badge)' }}>
-                  {['Judul Video', 'Views', 'CTR', 'Status', 'Upload', 'Anomali', 'Prediksi'].map(h => (
+                  {['Judul Video', 'Views', 'CTR', 'Status', 'Upload', 'Pola', 'Prediksi'].map(h => (
                     <th key={h} style={{
                       padding: '0.85rem 1.25rem', textAlign: 'left',
                       fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600,
@@ -701,7 +701,7 @@ export default function Analytics() {
                       <td style={{ padding: '0.9rem 1.25rem' }}>
                         <span className={`badge ${cfg.cls}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                           <Icon size={10} />
-                          {v.status}
+                          {v.status === 'Anomali' ? 'Pola Unik' : v.status}
                         </span>
                       </td>
                       {/* Upload date */}
@@ -711,7 +711,7 @@ export default function Analytics() {
                         {v.anomaly ? (
                           <span className="badge badge-red" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                             <AlertTriangle size={10} />
-                            Anomali
+                            Pola Unik
                           </span>
                         ) : (
                           <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem', fontWeight: 700 }}>—</span>

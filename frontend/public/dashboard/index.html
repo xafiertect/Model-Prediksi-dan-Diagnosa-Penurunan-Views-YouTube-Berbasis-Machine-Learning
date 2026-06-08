@@ -253,7 +253,11 @@
 <div class="nav-shell">
   <nav class="nav glass glow">
     <div class="brand">
-      <div class="brand-logo">H</div>
+      <div class="brand-logo-anim brand-logo-sm" aria-label="Hippo Academy Logo">
+        <div class="logo-square">
+          <span class="logo-letter-sm">H</span>
+        </div>
+      </div>
       <div>
         <div class="brand-name">Hippo Academy</div>
         <div class="brand-sub">YouTube Analytics</div>
@@ -283,7 +287,7 @@
 
   <div class="dash-head">
     <h1>Dashboard Performa</h1>
-    <p>Prediksi views &amp; deteksi anomali berbasis Machine Learning</p>
+    <p>Perkiraan penonton &amp; deteksi penurunan performa video YouTube Anda</p>
   </div>
 
   <!-- Connect card (rendered by JS) -->
@@ -291,7 +295,7 @@
 
   <!-- Predict bar -->
   <div class="predict-bar glass glow">
-    <div class="pb-txt" id="pb-txt">Sync video atau pilih data sampel, lalu klik <b>Prediksi Sekarang</b>.</div>
+    <div class="pb-txt" id="pb-txt">Hubungkan channel atau pilih data sampel, lalu klik <b>Prediksi Sekarang</b>.</div>
     <button class="btn btn-primary" id="predict-btn">
       Prediksi Sekarang
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
@@ -301,25 +305,25 @@
   <!-- Stat cards -->
   <div class="stat-grid">
     <div class="scard" style="--c:var(--accent-cyan)">
-      <div class="scard-top"><span class="k">Views Saat Ini</span>
+      <div class="scard-top"><span class="k">Penonton Saat Ini</span>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
       </div>
       <div class="v" id="m-views">15,000</div>
     </div>
     <div class="scard" style="--c:#15b66c">
-      <div class="scard-top"><span class="k">CTR</span>
+      <div class="scard-top"><span class="k">Rasio Klik (CTR)</span>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M21 12a9 9 0 1 1-6.2-8.5"/></svg></span>
       </div>
       <div class="v" id="m-ctr">4.5%</div>
     </div>
     <div class="scard" style="--c:#f59e0b">
-      <div class="scard-top"><span class="k">Subs Gained</span>
+      <div class="scard-top"><span class="k">Subscriber Baru</span>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span>
       </div>
       <div class="v" id="m-subs">50</div>
     </div>
     <div class="scard" style="--c:#7c5cff">
-      <div class="scard-top"><span class="k">Retensi</span>
+      <div class="scard-top"><span class="k">Durasi Tonton (Retensi)</span>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></span>
       </div>
       <div class="v" id="m-ret">35%</div>
@@ -330,8 +334,8 @@
   <div class="main-grid">
     <!-- Left: Chart -->
     <div class="block">
-      <h3>Proyeksi Views</h3>
-      <div class="bsub">Horizon 1 / 2 / 3 hari ke depan (detail per jam Hari 1–2)</div>
+      <h3>Proyeksi Penonton</h3>
+      <div class="bsub">Prediksi perkiraan jumlah penonton untuk 3 hari ke depan</div>
       <div class="proj-body" id="proj-body">
         <div class="empty">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -347,8 +351,8 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
         </div>
         <div>
-          <h3 style="margin:0;">Analisis AI Consultant</h3>
-          <div class="bsub" style="margin-top:2px;">Gemini RAG · alasan performa video</div>
+          <h3 style="margin:0;">Analisis Asisten AI</h3>
+          <div class="bsub" style="margin-top:2px;">Laporan detail &amp; rekomendasi taktis video Anda</div>
         </div>
       </div>
       <div id="ai-body">
@@ -538,7 +542,7 @@ async function onYtSelect(val){
       updateStats();
       const note=d.analytics_available?'data analytics real-time':'data statistik video';
       showMsg(document.getElementById('connect-msg'),`✅ Berhasil memuat ${note}: "${d.video_title}"`,'ok');
-      setPbText(`Model siap menganalisis <b>${d.video_title}</b>. Klik prediksi untuk jalankan XGBoost + Isolation Forest.`);
+      setPbText(`Video <b>${d.video_title}</b> siap dianalisis. Klik tombol di kanan untuk memulai analisis performa.`);
     }
   }catch(e){showMsg(document.getElementById('connect-msg'),'❌ '+e.message,'err');}
   finally{if(ind)ind.style.display='none';}
@@ -560,7 +564,7 @@ async function syncVideo(idOrUrl){
       S.title=d.video_title;
       updateStats();
       showMsg(msg,`✅ "${d.video_title}"${d.is_fallback?' (dari dataset sampel)':''}`,'ok');
-      setPbText(`Model siap menganalisis <b>${d.video_title}</b>. Klik prediksi untuk jalankan XGBoost + Isolation Forest.`);
+      setPbText(`Video <b>${d.video_title}</b> siap dianalisis. Klik tombol di kanan untuk memulai analisis performa.`);
     }
   }catch(e){showMsg(msg,'❌ Gagal sync: '+e.message,'err');}
   finally{if(btn)btn.disabled=false;}
@@ -594,7 +598,7 @@ document.getElementById('predict-btn').addEventListener('click',async function()
   const btn=this;
   btn.disabled=true;
   btn.innerHTML='<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;"><path d="M21 12a9 9 0 1 1-6.2-8.5"/></svg> Menganalisis...';
-  setPbText('Menganalisis video dengan XGBoost + Isolation Forest...');
+  setPbText('Sedang menganalisis performa video Anda...');
 
   try{
     const r=await fetch(`${API}/predict/`,{
@@ -646,8 +650,8 @@ function renderChart(pts,d){
   const labels=['Sekarang','+1 Hari','+2 Hari','+3 Hari'];
   const ticks=labels.map((lb,k)=>`<text x="${(pL+(k/(labels.length-1))*iw).toFixed(0)}" y="${H-8}" font-family="var(--font-mono)" font-size="10" fill="var(--text-faint)" text-anchor="${k===0?'start':k===labels.length-1?'end':'middle'}">${lb}</text>`).join('');
   const lastX=X(n),lastY=Y(vals[n]);
-  const statusColor=d.status==='Viral'?'#ff7a59':d.status==='Tidak Viral'?'var(--danger)':d.status==='Anomali'?'#a78bfa':'#f59e0b';
   const verdictCls=d.status==='Viral'?'viral':d.status==='Tidak Viral'?'no':d.status==='Anomali'?'anomaly':'normal';
+  const verdictTxt=d.status==='Viral'?'🔥 Berpotensi Viral':d.status==='Tidak Viral'?'⚠️ Perlu Optimasi':d.status==='Anomali'?'🔮 Pola Tidak Biasa':'📊 Performa Normal';
   document.getElementById('proj-body').innerHTML=`
     <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;margin-top:14px;">
       <defs>
@@ -664,8 +668,8 @@ function renderChart(pts,d){
     </svg>
     <div class="result-bar">
       <div>
-        <span class="result-verdict verdict ${verdictCls}" style="">${d.status==='Viral'?'🔥 Berpotensi Viral':d.status==='Tidak Viral'?'⚠️ Belum Viral':d.status==='Anomali'?'🔮 Anomali Terdeteksi':'📊 Performa Normal'}</span>
-        <span style="font-size:13px;color:var(--text-muted);margin-left:10px;">Confidence: ${Math.round((d.confidence||0)*100)}%</span>
+        <span class="result-verdict verdict ${verdictCls}">${verdictTxt}</span>
+        <span style="font-size:13px;color:var(--text-muted);margin-left:10px;">Tingkat Keyakinan: ${Math.round((d.confidence||0)*100)}%</span>
       </div>
       <div class="result-reco">${d.recommendation||''}</div>
     </div>`;
@@ -686,11 +690,12 @@ function renderChartSynthetic(d){
   const ticks=labels.map((lb,k)=>`<text x="${(pL+(k/(labels.length-1))*iw).toFixed(0)}" y="${H-8}" font-family="var(--font-mono)" font-size="10" fill="var(--text-faint)" text-anchor="${k===0?'start':k===labels.length-1?'end':'middle'}">${lb}</text>`).join('');
   const lastX=X(n),lastY=Y(pts[n]);
   const verdictCls=d.status==='Viral'?'viral':d.status==='Tidak Viral'?'no':d.status==='Anomali'?'anomaly':'normal';
+  const verdictTxt=d.status==='Viral'?'🔥 Berpotensi Viral':d.status==='Tidak Viral'?'⚠️ Perlu Optimasi':d.status==='Anomali'?'🔮 Pola Tidak Biasa':'📊 Performa Normal';
   document.getElementById('proj-body').innerHTML=`
     <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;margin-top:14px;">
       <defs>
-        <linearGradient id="lg2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--accent-blue)"/><stop offset="1" stop-color="var(--accent-cyan)"/></linearGradient>
-        <linearGradient id="ag2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent-blue)" stop-opacity=".26"/><stop offset="1" stop-color="var(--accent-blue)" stop-opacity="0"/></linearGradient>
+         <linearGradient id="lg2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--accent-blue)"/><stop offset="1" stop-color="var(--accent-cyan)"/></linearGradient>
+         <linearGradient id="ag2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent-blue)" stop-opacity=".26"/><stop offset="1" stop-color="var(--accent-blue)" stop-opacity="0"/></linearGradient>
       </defs>
       ${[.25,.5,.75].map(g=>`<line x1="${pL}" x2="${W-pR}" y1="${(pT+ih*g).toFixed(0)}" y2="${(pT+ih*g).toFixed(0)}" stroke="var(--glass-hairline)" stroke-width="1" stroke-dasharray="3 5"/>`).join('')}
       <path d="${band}" fill="var(--accent-cyan)" fill-opacity=".13"/>
@@ -702,8 +707,8 @@ function renderChartSynthetic(d){
     </svg>
     <div class="result-bar">
       <div>
-        <span class="result-verdict verdict ${verdictCls}">${d.status==='Viral'?'🔥 Berpotensi Viral':d.status==='Tidak Viral'?'⚠️ Belum Viral':d.status==='Anomali'?'🔮 Anomali Terdeteksi':'📊 Performa Normal'}</span>
-        <span style="font-size:13px;color:var(--text-muted);margin-left:10px;">Confidence: ${Math.round((d.confidence||0)*100)}%</span>
+        <span class="result-verdict verdict ${verdictCls}">${verdictTxt}</span>
+        <span style="font-size:13px;color:var(--text-muted);margin-left:10px;">Tingkat Keyakinan: ${Math.round((d.confidence||0)*100)}%</span>
       </div>
       <div class="result-reco">${d.recommendation||''}</div>
     </div>`;
@@ -712,10 +717,10 @@ function renderChartSynthetic(d){
 function renderAI(d){
   const body=document.getElementById('ai-body');
   const verdictCls=d.status==='Viral'?'viral':d.status==='Tidak Viral'?'no':d.status==='Anomali'?'anomaly':'normal';
-  const verdictTxt=d.status==='Viral'?'🔥 Berpotensi Viral':d.status==='Tidak Viral'?'⚠️ Belum Viral':d.status==='Anomali'?'🔮 Anomali Terdeteksi':'📊 Performa Normal';
+  const verdictTxt=d.status==='Viral'?'🔥 Berpotensi Viral':d.status==='Tidak Viral'?'⚠️ Perlu Optimasi':d.status==='Anomali'?'🔮 Pola Tidak Biasa':'📊 Performa Normal';
   const conf=Math.round((d.confidence||0)*100);
   const day3=d.predicted_views&&d.predicted_views.day3!=null?d.predicted_views.day3:null;
-  const scoreHtml=`Confidence <b>${conf}%</b>${day3!=null?` · Proyeksi 3 hari <b>${Number(day3).toLocaleString('id-ID')} views</b>`:''}`;
+  const scoreHtml=`Tingkat Keyakinan <b>${conf}%</b>${day3!=null?` · Prediksi 3 hari <b>${Number(day3).toLocaleString('id-ID')} penonton</b>`:''}`;
 
   /* Build reason list from recommendation text */
   const reco=d.recommendation||'';
@@ -728,36 +733,36 @@ function renderAI(d){
   let reasons=[];
   if(d.status==='Anomali'){
     reasons=[
-      [anomalyIco,`<b>Anomali terdeteksi</b> — video ini memiliki pola statistik yang tidak biasa dibanding rata-rata dataset.`],
-      [dn,`<b>Isolation Forest</b> score: ${(d.anomaly&&d.anomaly.score!=null?d.anomaly.score.toFixed(3):'N/A')} — nilai negatif menandakan outlier.`],
-      [up,`Video dengan anomali views tinggi sering menunjukkan <b>viral burst</b> mendadak — pantau momentum.`],
-      [anomalyIco,reco||'Analisis lebih lanjut diperlukan untuk menentukan penyebab anomali ini.']
+      [anomalyIco,`<b>Pola tidak biasa terdeteksi</b> — video ini memiliki performa yang sangat berbeda dibandingkan video Anda yang lain.`],
+      [dn,`<b>Skor Keunikan AI</b>: ${(d.anomaly&&d.anomaly.score!=null?d.anomaly.score.toFixed(3):'N/A')} — angka negatif menunjukkan performa di luar kebiasaan normal.`],
+      [up,`Video dengan keunikan tinggi sering menandakan <b>lonjakan penonton mendadak</b> — manfaatkan momentum ini.`],
+      [anomalyIco,reco||'Analisis lebih lanjut diperlukan untuk menentukan penyebab keunikan performa ini.']
     ];
   }else if(viral){
     reasons=[
-      [up,`<b>CTR ${S.form.ctr}%</b> kuat menarik klik dari impressions — thumbnail & judul efektif.`],
-      [up,`<b>Retensi ${S.form.retention_rate}%</b> stabil — sinyal kuat untuk algoritma rekomendasi YouTube.`],
-      [up,`Views per jam menunjukkan momentum awal yang baik, melewati ambang viral model Hippo Academy.`],
+      [up,`<b>Daya Tarik Klik ${S.form.ctr}%</b> sangat kuat — pilihan judul dan gambar pratinjau (thumbnail) Anda bekerja dengan sangat baik.`],
+      [up,`<b>Durasi Tonton ${S.form.retention_rate}%</b> stabil — penonton betah menonton video Anda, ini sinyal bagus untuk YouTube.`],
+      [up,`Penonton per jam menunjukkan awal yang sangat baik, melampaui rata-rata video viral pada umumnya.`],
       [dn,reco||'Pertahankan konsistensi upload untuk menjaga momentum.']
     ];
   }else if(normal){
     reasons=[
-      [up,`<b>CTR ${S.form.ctr}%</b> berada di rentang rata-rata — ada ruang untuk optimasi thumbnail.`],
-      [up,`<b>Retensi ${S.form.retention_rate}%</b> dalam batas normal — hook konten sudah cukup baik.`],
-      [dn,`Views belum melewati threshold viral (2000 views/2 jam) — perlu dorongan distribusi.`],
+      [up,`<b>Daya Tarik Klik ${S.form.ctr}%</b> berada di batas rata-rata — Anda bisa meningkatkan performa dengan memperbarui gambar thumbnail.`],
+      [up,`<b>Durasi Tonton ${S.form.retention_rate}%</b> dalam batas normal — bagian pembuka video sudah cukup menarik.`],
+      [dn,`Views belum melampaui batas viral (2.000 penonton dalam 2 jam pertama) — butuh promosi tambahan.`],
       [dn,reco||'Coba promosikan video di komunitas atau kolaborasi untuk meningkatkan impressions.']
     ];
   }else{
     reasons=[
-      [dn,`<b>CTR ${S.form.ctr}%</b> masih di bawah optimal — evaluasi thumbnail dan judul video.`],
-      [dn,`Momentum views per jam (<1000/2jam) belum memenuhi ambang batas model Hippo Academy.`],
-      [up,`Subs gained ${S.form.subscriber_gained} menunjukkan audiens masih tertarik dengan konten.`],
+      [dn,`<b>Daya Tarik Klik ${S.form.ctr}%</b> masih di bawah rata-rata — cobalah ubah judul atau gambar pratinjau (thumbnail) agar lebih menggoda.`],
+      [dn,`Pergerakan penonton per jam masih lambat (kurang dari 1.000 penonton per 2 jam).`],
+      [up,`Penambahan Subscriber sebanyak ${S.form.subscriber_gained} membuktikan penonton baru menyukai video Anda.`],
       [dn,reco||'Fokus pada perbaikan hook 30 detik pertama dan distribusi konten yang lebih luas.']
     ];
   }
 
   // Re-initialize chat history for the predicted video
-  S.chatHistory = [{ role: 'model', parts: `Halo! Berdasarkan analisis, video Anda berkategori **${verdictTxt}** (confidence ${conf}%). Ada detail metrik atau saran optimasi spesifik yang ingin Anda diskusikan?` }];
+  S.chatHistory = [{ role: 'model', parts: `Halo! Berdasarkan analisis, video Anda berkategori **${verdictTxt}** (Tingkat Keyakinan ${conf}%). Ada detail metrik atau saran optimasi spesifik yang ingin Anda diskusikan?` }];
 
   body.innerHTML=`
     <div class="verdict ${verdictCls}">${verdictTxt}</div>
@@ -767,7 +772,7 @@ function renderAI(d){
     </ul>
     <div class="ai-chat-container" style="margin-top: 20px; border-top: 1px solid var(--glass-hairline); padding-top: 16px; display: flex; flex-direction: column;">
       <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-strong); margin: 0 0 10px; display: flex; align-items: center; gap: 6px;">
-        💬 Tanya Detail ke AI Consultant
+        💬 Tanya Detail ke Asisten AI
       </h4>
       <div id="ai-chat-history" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 4px; border-radius: 8px;">
         <!-- Chat bubbles populated dynamically -->

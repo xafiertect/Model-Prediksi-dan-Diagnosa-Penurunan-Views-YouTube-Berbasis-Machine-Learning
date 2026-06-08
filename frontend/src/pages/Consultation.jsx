@@ -9,7 +9,7 @@ const PRESETS = [
   'Strategi hook 30 detik pertama yang terbukti efektif',
   'Video mana yang paling berisiko decline?',
   'Cara riset topik yang punya potensi viral tinggi',
-  'Kenapa anomali bisa terjadi di channel ini?',
+  'Kenapa bisa terjadi pola performa unik di channel ini?',
   'Gimana cara nulis judul yang CTR-nya tinggi?',
 ];
 
@@ -25,7 +25,7 @@ function isHardOffTopic(msg) {
 
 export default function Consultation() {
   const [messages,  setMessages]  = useState([
-    { role: 'ai', text: 'Hei! Gue AI engineer yang ngebangun sistem analitik Hippo Academy ini.\n\nGue punya akses ke data lengkap: 2.356 video dianalisis, model XGBoost buat prediksi views, Isolation Forest buat deteksi anomali, plus semua output dari pipeline ML-nya.\n\nTanya apa aja — strategi konten, cara kerja modelnya, kenapa ada video yang anomali, atau gimana channel ini bisa lebih optimal.' }
+    { role: 'ai', text: 'Halo! Saya asisten pintar Hippo Academy yang siap membantu memulihkan performa channel Anda.\n\nSaya memiliki akses ke data statistik lengkap dan analisis performa video Anda untuk mendeteksi penurunan penonton, tren rilis, serta taktik optimasi terbaik.\n\nTanyakan apa saja — mulai dari saran ide konten, perbaikan thumbnail/judul, hingga strategi agar channel Anda kembali ramai penonton.' }
   ]);
   const [input,    setInput]    = useState('');
   const [loading,  setLoading]  = useState(false);

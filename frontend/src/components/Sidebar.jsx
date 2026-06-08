@@ -8,7 +8,11 @@ export default function Sidebar({ theme, toggleTheme, onLogout }) {
       <div className="nav-shell">
         <nav className="nav glass glow">
           <div className="brand">
-            <div className="brand-logo">H</div>
+            <div className="brand-logo-anim brand-logo-sm" aria-label="Hippo Academy Logo">
+              <div className="logo-square">
+                <span className="logo-letter-sm">H</span>
+              </div>
+            </div>
             <div>
               <div className="brand-name">Hippo Academy</div>
               <div className="brand-sub">YouTube Analytics</div>

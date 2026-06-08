@@ -47,8 +47,8 @@
   --glass-hairline: rgba(255, 122, 89, 0.25);
   --glass-sheen: rgba(255, 255, 255, 0.9);
 
-  --card-shadow: 0 24px 60px -28px rgba(15, 23, 42, 0.15),
-                 0 4px 14px -6px rgba(15, 23, 42, 0.05);
+  --card-shadow: 0 24px 60px -28px rgba(240, 70, 139, 0.16),
+                 0 4px 14px -6px rgba(240, 70, 139, 0.06);
   --glow-shadow: 0 0 0 1px rgba(255, 122, 89, 0.18),
                  0 18px 50px -18px rgba(255, 122, 89, calc(0.45 * var(--glow-strength)));
 
@@ -84,8 +84,8 @@
   --glass-hairline: rgba(255, 122, 89, 0.22);
   --glass-sheen: rgba(255, 255, 255, 0.12);
 
-  --card-shadow: 0 28px 70px -30px rgba(0, 0, 0, 0.8),
-                 0 4px 14px -6px rgba(0, 0, 0, 0.5);
+  --card-shadow: 0 28px 70px -30px rgba(0, 0, 0, 0.75),
+                 0 0 35px rgba(255, 122, 89, 0.07);
   --glow-shadow: 0 0 0 1px rgba(255, 122, 89, 0.16),
                  0 22px 60px -22px rgba(255, 122, 89, calc(0.55 * var(--glow-strength)));
 
