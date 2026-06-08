@@ -1,6 +1,6 @@
 # Ganti "yourdomain.com" dengan domain asli (auto-HTTPS via Let's Encrypt
 # jalan otomatis asal A record domain sudah pointing ke IP VPS).
-yourdomain.com {
+wrappyt.web.id {
     encode gzip
 
     # Backend API — di-strip prefix /api lalu diteruskan ke backend (internal-only,
