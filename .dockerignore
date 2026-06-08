@@ -1,0 +1,26 @@
+# Build context untuk backend = project root (lihat docker-compose.yml).
+# File besar/sensitif di bawah ini di-mount sebagai volume saat runtime,
+# bukan di-bake ke image — jaga image tetap kecil & gampang di-rebuild.
+
+.git/
+.github/
+captonevenv/
+node_modules/
+frontend/
+docs/
+notebooks/
+data/
+*.md
+
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.log
+backend/test_*.py
+backend/models/*.pkl
+backend/scalers/*.pkl
+backend/data/
+backend/token_store.json
+backend/.env
+
+.env
+.env.*

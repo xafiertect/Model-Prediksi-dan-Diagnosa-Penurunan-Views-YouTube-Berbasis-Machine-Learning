@@ -1,0 +1,69 @@
+name: hippo-academy
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - proxy
+    depends_on:
+      - backend
+      - frontend
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      # Model & scaler files digitignore (*.pkl) — di-mount, bukan di-bake ke image
+      - ./backend/models:/app/backend/models:ro
+      - ./backend/scalers:/app/backend/scalers:ro
+      # data/ (knowledge base, drafts.json) — perlu read-write untuk drafts CRUD
+      - ./backend/data:/app/backend/data
+      # Token OAuth YouTube — persist di host, bukan di image
+      - ./backend/token_store.json:/app/backend/token_store.json
+      # CSV hasil pipeline notebook (juga digitignore)
+      - ./data/processed:/app/data/processed:ro
+      - ./data/cleaned:/app/data/cleaned:ro
+    expose:
+      - "8000"          # cuma dokumentasi, TIDAK di-publish ke host
+    networks:
+      - proxy           # biar Caddy bisa akses + backend tetap bisa keluar (YouTube/Gemini API)
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api   # baked saat build — frontend hit same-origin /api/*, di-proxy Caddy ke backend
+    restart: unless-stopped
+    expose:
+      - "80"            # cuma dokumentasi, TIDAK di-publish ke host
+    networks:
+      - proxy
+    depends_on:
+      - backend
+
+networks:
+  proxy:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

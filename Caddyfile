@@ -1,0 +1,33 @@
+# Ganti "yourdomain.com" dengan domain asli (auto-HTTPS via Let's Encrypt
+# jalan otomatis asal A record domain sudah pointing ke IP VPS).
+yourdomain.com {
+    encode gzip
+
+    # Backend API — di-strip prefix /api lalu diteruskan ke backend (internal-only,
+    # tidak pernah publish port sendiri). Frontend di-build dengan VITE_API_URL=/api
+    # supaya semua request axios memakai prefix ini (same-origin).
+    handle_path /api/* {
+        reverse_proxy backend:8000
+    }
+
+    # Sisanya → frontend SPA (nginx, juga internal-only)
+    handle {
+        reverse_proxy frontend:80
+    }
+
+    log {
+        output stdout
+    }
+}
+
+# ── Buat testing tanpa domain (akses pakai IP VPS langsung, HTTP saja) ──────────
+# Hapus blok di atas, lalu pakai blok ini:
+#
+# :80 {
+#     handle_path /api/* {
+#         reverse_proxy backend:8000
+#     }
+#     handle {
+#         reverse_proxy frontend:80
+#     }
+# }
