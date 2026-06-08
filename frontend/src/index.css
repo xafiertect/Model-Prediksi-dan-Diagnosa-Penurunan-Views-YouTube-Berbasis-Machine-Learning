@@ -31,8 +31,8 @@
   --text-card-head:   #E2E8F0;
   
   --bg-gradient-main: radial-gradient(ellipse at 20% 50%, rgba(255, 122, 89, 0.05) 0%, transparent 60%), #0B0F19;
-  --shadow-premium:   0 15px 35px -5px rgba(0, 0, 0, 0.5), 0 5px 15px -5px rgba(0, 0, 0, 0.3);
-  --shadow-glow:      0 0 25px rgba(255, 122, 89, 0.18);
+  --shadow-premium:   0 20px 48px -10px rgba(255, 122, 89, 0.12), 0 10px 24px -10px rgba(0, 0, 0, 0.5);
+  --shadow-glow:      0 0 35px rgba(255, 122, 89, 0.22);
   --bg-hover:         rgba(255, 255, 255, 0.04);
   --bg-badge:         rgba(15, 23, 42, 0.4);
 }
@@ -62,8 +62,8 @@ html[data-theme="light"] {
   --text-card-head:   #1E293B;
   
   --bg-gradient-main: radial-gradient(ellipse at 20% 50%, rgba(255, 122, 89, 0.06) 0%, transparent 60%), #F8FAFC;
-  --shadow-premium:   0 15px 35px -5px rgba(15, 23, 42, 0.06), 0 5px 15px -5px rgba(15, 23, 42, 0.03);
-  --shadow-glow:      0 0 25px rgba(255, 122, 89, 0.12);
+  --shadow-premium:   0 20px 48px -10px rgba(255, 122, 89, 0.08), 0 10px 24px -10px rgba(15, 23, 42, 0.04);
+  --shadow-glow:      0 0 35px rgba(255, 122, 89, 0.16);
   --bg-hover:         rgba(15, 23, 42, 0.04);
   --bg-badge:         rgba(255, 255, 255, 0.85);
 }
@@ -440,23 +440,23 @@ body {
 }
 
 .card-3d:hover {
-  transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.65), 0 0 25px rgba(255, 122, 89, 0.25);
+  transform: translateY(-8px) rotateX(1.5deg) rotateY(-1.5deg);
+  box-shadow: 0 30px 60px -15px rgba(255, 122, 89, 0.28), 0 0 35px rgba(255, 122, 89, 0.15);
   border-color: var(--accent-cyan) !important;
 }
 
 /* Glowing Border/Shadow Utilities */
 .glow-cyan {
-  box-shadow: 0 0 20px rgba(255, 122, 89, 0.12);
+  box-shadow: 0 15px 35px rgba(255, 122, 89, 0.16);
 }
 .glow-green {
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.12);
+  box-shadow: 0 15px 35px rgba(16, 185, 129, 0.16);
 }
 .glow-gold {
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.12);
+  box-shadow: 0 15px 35px rgba(245, 158, 11, 0.16);
 }
 .glow-red {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.12);
+  box-shadow: 0 15px 35px rgba(239, 68, 68, 0.16);
 }
 
 /* Background 3D Glass Orbs & Float Animations */

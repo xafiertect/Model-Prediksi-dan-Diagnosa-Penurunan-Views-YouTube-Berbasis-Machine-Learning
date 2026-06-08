@@ -38,13 +38,27 @@ function ForecastChart() {
     getForecastData(30)
       .then(res => {
         const rows = res.data?.data || [];
-        // Normalise: keep only rows with valid yhat
-        setData(rows.filter(r => r.yhat != null).map(r => ({
-          date:  r.ds ? String(r.ds).slice(0, 10) : '',
-          yhat:  Math.round(r.yhat),
-          lower: Math.round(r.yhat_lower ?? r.yhat),
-          upper: Math.round(r.yhat_upper ?? r.yhat),
-        })));
+        const validRows = rows.filter(r => r.yhat != null);
+        if (validRows.length === 0) {
+          setData([]);
+          return;
+        }
+
+        // Calculate max predicted yhat to cap the upper axis at 1.4x of that
+        const maxYhat = Math.max(...validRows.map(r => r.yhat || 0), 50000);
+        const limitY = maxYhat * 1.4;
+
+        setData(validRows.map(r => {
+          const yhat = Math.round(r.yhat);
+          const rawLower = Math.round(r.yhat_lower ?? r.yhat);
+          const rawUpper = Math.round(r.yhat_upper ?? r.yhat);
+          return {
+            date:  r.ds ? String(r.ds).slice(0, 10) : '',
+            yhat:  yhat,
+            lower: Math.max(0, Math.min(rawLower, limitY)),
+            upper: Math.min(rawUpper, limitY),
+          };
+        }));
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
@@ -92,7 +106,7 @@ function ForecastChart() {
           tickFormatter={v => v.slice(5)} // MM-DD only
           interval="preserveStartEnd"
         />
-        <YAxis tick={{ fontSize: 10, fill: 'var(--text-dim)' }} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
+        <YAxis tick={{ fontSize: 10, fill: 'var(--text-dim)' }} tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}K` : v} />
         <Tooltip content={<CustomTooltip />} />
         {/* CI band — upper */}
         <Area type="monotone" dataKey="upper" stroke="none" fill="url(#ciGrad)" fillOpacity={1} legendType="none" />
@@ -525,7 +539,7 @@ export default function Analytics() {
       )}
 
       {/* ── Prophet Forecast ──────────────────────────────────────────────────── */}
-      <div className="glass-panel card-3d glow-cyan" style={{ padding: '1.25rem 1.5rem' }}>
+      <div className="glass-panel glow-cyan" style={{ padding: '1.25rem 1.5rem' }}>
         <div style={{ marginBottom: '1rem' }}>
           <h2 style={{ fontSize: '1rem', fontWeight: 700 }}>Forecast Views — Prophet Model</h2>
           <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>30 hari ke depan · Area abu-abu = confidence interval 95%</p>

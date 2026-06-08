@@ -76,7 +76,15 @@ export default function Consultation() {
       </div>
 
       {/* Chat Area */}
-      <div className="glass-panel card-3d glow-cyan" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
+      <div className="glass-panel" style={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column', 
+        overflow: 'hidden', 
+        padding: 0,
+        boxShadow: '0 20px 48px -10px rgba(255, 122, 89, 0.15), 0 0 35px rgba(255, 122, 89, 0.05)',
+        border: '1px solid rgba(255, 122, 89, 0.15)'
+      }}>
         {/* Messages */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {messages.map((msg, i) => {
