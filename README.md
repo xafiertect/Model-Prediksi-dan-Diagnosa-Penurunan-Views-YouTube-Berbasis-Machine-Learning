@@ -62,7 +62,9 @@ Berikut adalah demonstrasi aplikasi, alur integrasi YouTube OAuth, proses diagno
 | Fitur | Deskripsi | Teknologi |
 | :--- | :--- | :--- |
 | 📊 **Multi-Horizon Prediction** | Peramalan views untuk 7, 14, dan 30 hari ke depan untuk melihat potensi tren drop | XGBoost Regression |
+| 📉 **Decline Classification** | Klasifikasi biner dan tingkat risiko penurunan performa video (Low/Med/High/Critical) | XGBoost Classifier |
 | 🔍 **Anomaly Detection** | Deteksi otomatis penurunan views yang tidak wajar di luar tren musiman | Isolation Forest |
+| ⏳ **Viral Survival Detection** | Estimasi probabilitas video menjadi viral pada jam ke-2, 24, dan 48 sejak diunggah | Cox Proportional Hazard |
 | 🤖 **RAG AI Consultant** | Konsultan AI interaktif yang dibatasi pada basis pengetahuan strategi pemulihan views | Google Gemini API + RAG |
 | 🔗 **YouTube OAuth 2.0** | Sinkronisasi data performa channel kreator secara real-time langsung dari YouTube API | YouTube Data & Analytics API |
 | 🎨 **Content Management** | Pengelolaan ide konten, draf naskah, analisis thumbnail, dan rekomendasi waktu upload | FastAPI CRUD + Pillow |
@@ -122,7 +124,7 @@ Berikut adalah demonstrasi aplikasi, alur integrasi YouTube OAuth, proses diagno
 ├── notebooks/                    # Pipeline Riset & Pelatihan Model (Jupyter)
 │   ├── preparation/              # Pembersihan & penggabungan dataset
 │   ├── feature_engineering/      # Ekstraksi fitur & transformasi data
-│   └── modelling/                # Pelatihan, evaluasi XGBoost & ekspor model
+│   └── modelling/                # Pelatihan & evaluasi model (XGBoost Reg/Clf, Prophet, IsoForest, Cox PH)
 │
 ├── docker-compose.yml            # Konfigurasi orkestrasi Docker multi-container
 ├── Caddyfile                     # Konfigurasi reverse proxy & SSL otomatis

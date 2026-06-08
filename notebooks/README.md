@@ -35,7 +35,8 @@ notebooks/
 └── modelling/                               # Phase 3: Model Training
     ├── 08_model1_regression_views.ipynb      #   XGBoost regression (7d/14d/30d forecast)
     ├── 09_model2_timeseries_forecast.ipynb   #   Prophet time-series forecasting
-    └── 10_model3_anomaly_detection.ipynb     #   Isolation Forest anomaly detection
+    ├── 10_model3_anomaly_detection.ipynb     #   Isolation Forest anomaly detection
+    └── 11_model4_decline_classifier.ipynb    #   XGBoost Decline Classifier & Cox PH Survival
 ```
 
 ---
@@ -50,8 +51,9 @@ Phase 1                    Phase 2                           Phase 3
 │  prep_data   │───▶│  02 - 06 Feature Eng.  │───▶│  08 XGBoost Regression   │
 │              │    │  07 Aggregation        │    │  09 Prophet Forecast     │
 │  Raw CSV     │    │                        │    │  10 Isolation Forest     │
-│  → Clean CSV │    │  → features_merged.csv │    │                          │
-└──────────────┘    └────────────────────────┘    │  → models/*.pkl          │
+│  → Clean CSV │    │  → features_merged.csv │    │  11 Decline & Survival   │
+└──────────────┘    └────────────────────────┘    │                          │
+                                                  │  → models/*.pkl          │
                                                   │  → scalers/*.pkl         │
                                                   └──────────────────────────┘
 ```
@@ -80,6 +82,7 @@ Phase 1                    Phase 2                           Phase 3
 | `08_model1_regression_views.ipynb` | View Forecaster | XGBoost Regressor | `model1_xgboost_*.pkl`, `scaler_model1.pkl` |
 | `09_model2_timeseries_forecast.ipynb` | Time-Series | Prophet | `model2_prophet.pkl` |
 | `10_model3_anomaly_detection.ipynb` | Anomaly Detector | Isolation Forest | `model3_isolation_forest.pkl`, `scaler_model3.pkl` |
+| `11_model4_decline_classifier.ipynb` | Decline Classifier & Viral Predictor | XGBoost Classifier + Cox PH | `model4_decline_classifier*.pkl`, `model4_threshold.pkl`, `model5_viral_survival.pkl`, `model5_metadata.pkl`, `scaler_model4.pkl` |
 
 ---
 
