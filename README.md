@@ -199,11 +199,11 @@ Buka **http://localhost:5173** di browser Anda.
 
 ## 👥 Tim Kontributor
 
-* **Rizqi Maulidiyah** - Project Lead & Developer
-* **Wildan Taufiqurrahman** - Backend & ML Engineer
-* **Akmal Goldi** - ML Engineer
-* **Yusuf Al-Qodri** - ML Engineer
-* **Zahra** - Frontend UI Developer
+* [**Rizqi Maulidiyah**](https://github.com/xafiertect) - Project Lead & Developer
+* [**Wildan Taufiqurrahman**](https://github.com/wildantaw2002) - Backend & ML Engineer
+* [**Akmal Goldi**](https://github.com/akmalgoldi) - ML Engineer
+* [**Yusuf Al-Qodri**](https://github.com/yusufal-qodri) - ML Engineer
+* [**Zahra**](https://github.com/zahrawani226-hash) - Frontend UI Developer
 
 ---
 
