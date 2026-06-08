@@ -832,7 +832,7 @@ function initDashboardAIChat() {
         body: JSON.stringify({ message: text, history: S.chatHistory.slice(0, -1) })
       });
       const data = await res.json();
-      const aiText = data.data?.response || 'Maaf, tidak ada respons dari server.';
+      const aiText = data.response || data.reply || 'Maaf, tidak ada respons dari server.';
       
       // Remove typing indicator & push response
       const indicator = document.getElementById('ai-chat-typing');
