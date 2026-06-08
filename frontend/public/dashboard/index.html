@@ -543,10 +543,7 @@ async function onYtSelect(val){
       const note=d.analytics_available?'data analytics real-time':'data statistik video';
       showMsg(document.getElementById('connect-msg'),`✅ Berhasil memuat ${note}: "${d.video_title}"`,'ok');
       setPbText(`Video <b>${d.video_title}</b> siap dianalisis. Klik tombol di kanan untuk memulai analisis performa.`);
-      setTimeout(() => {
-        const pBtn = document.getElementById('predict-btn');
-        if (pBtn) pBtn.click();
-      }, 50);
+      triggerAutoPredict();
     }
   }catch(e){showMsg(document.getElementById('connect-msg'),'❌ '+e.message,'err');}
   finally{if(ind)ind.style.display='none';}
@@ -569,13 +566,19 @@ async function syncVideo(idOrUrl){
       updateStats();
       showMsg(msg,`✅ "${d.video_title}"${d.is_fallback?' (dari dataset sampel)':''}`,'ok');
       setPbText(`Video <b>${d.video_title}</b> siap dianalisis. Klik tombol di kanan untuk memulai analisis performa.`);
-      setTimeout(() => {
-        const pBtn = document.getElementById('predict-btn');
-        if (pBtn) pBtn.click();
-      }, 50);
+      triggerAutoPredict();
     }
   }catch(e){showMsg(msg,'❌ Gagal sync: '+e.message,'err');}
   finally{if(btn)btn.disabled=false;}
+}
+
+function triggerAutoPredict(){
+  setTimeout(()=>{
+    const btn=document.getElementById('predict-btn');
+    if(btn&&!S.loading){
+      btn.click();
+    }
+  },150);
 }
 
 async function refreshChannel(){
@@ -918,6 +921,39 @@ async function init(){
   }
   if(params.get('yt_error')){
     showMsg(document.getElementById('connect-msg'),'❌ Koneksi YouTube dibatalkan.','err');
+  }
+
+  // Handle auto-select and auto-predict if video_id is passed in URL
+  const videoId = params.get('video_id');
+  if (videoId) {
+    // Clean URL
+    const newUrl = window.location.pathname;
+    window.history.replaceState({}, document.title, newUrl);
+    
+    let found = false;
+    if (S.yt.is_authenticated && S.ytVideos.some(v => v.video_id === videoId)) {
+      const selectEl = document.getElementById('yt-select');
+      if (selectEl) {
+        selectEl.value = videoId;
+        found = true;
+        await onYtSelect(videoId);
+      }
+    } else if (S.csvVideos.some(v => v.video_id === videoId)) {
+      const selectEl = document.getElementById('csv-select');
+      if (selectEl) {
+        selectEl.value = videoId;
+        found = true;
+        await onCsvSelect(videoId);
+      }
+    }
+    
+    if (!found) {
+      const syncInput = document.getElementById('sync-input');
+      if (syncInput) {
+        syncInput.value = videoId;
+        await syncVideo(videoId);
+      }
+    }
   }
 }
 

@@ -638,7 +638,15 @@ export default function Analytics() {
                     >
                       {/* Judul */}
                       <td style={{ padding: '0.75rem 1.25rem', maxWidth: 360 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div 
+                          onClick={() => {
+                            if (v.video_id) {
+                              window.location.href = `/dashboard/index.html?video_id=${encodeURIComponent(v.video_id)}`;
+                            }
+                          }}
+                          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: v.video_id ? 'pointer' : 'default' }}
+                          title={v.video_id ? "Klik untuk prediksi judul atau thumbnail di Dashboard" : ""}
+                        >
                           {v.video_id ? (
                             <img
                               src={`https://img.youtube.com/vi/${v.video_id}/mqdefault.jpg`}
@@ -661,7 +669,10 @@ export default function Analytics() {
                           )}
                           <div style={{ overflow: 'hidden' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                              <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              <span 
+                                className="title-link-hover"
+                                style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                              >
                                 {v.title || 'Video'}
                               </span>
                               {v.source === 'youtube_live' && (

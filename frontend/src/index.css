@@ -561,3 +561,8 @@ body {
 .tab-bar::-webkit-scrollbar {
   display: none;
 }
+
+.title-link-hover:hover {
+  text-decoration: underline;
+  color: var(--accent-cyan) !important;
+}
