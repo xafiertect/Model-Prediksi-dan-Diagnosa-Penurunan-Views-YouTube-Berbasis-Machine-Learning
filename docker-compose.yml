@@ -33,7 +33,7 @@ services:
       # Token OAuth YouTube — persist di host, bukan di image
       - ./backend/token_store.json:/app/backend/token_store.json
       # CSV hasil pipeline notebook (juga digitignore)
-      - ./data/processed:/app/data/processed:ro
+      - ./data/processed:/app/data/processed
       - ./data/cleaned:/app/data/cleaned:ro
     expose:
       - "8000"          # cuma dokumentasi, TIDAK di-publish ke host
