@@ -47,12 +47,12 @@ Berikut adalah demonstrasi aplikasi, alur integrasi YouTube OAuth, proses diagno
 
 <p align="center">
   <strong>1. Dashboard Utama & Status Prediksi Views</strong><br/>
-  <img src="./Screenshot_20260608_143942.png" alt="Dashboard Panel" width="90%" style="border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);" />
+  <img src="./docs/img/dashboard_prediction_v2.png" alt="Dashboard Panel" width="90%" style="border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);" />
 </p>
 
 <p align="center">
-  <strong>2. Analisis Anomali & Grafik Tren Multi-Horizon</strong><br/>
-  <img src="./Screenshot_20260608_145045.png" alt="Analytics Panel" width="90%" style="border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);" />
+  <strong>2. Analisis Anomali & Grafik Tren Multi-Horizon (Python Model Output)</strong><br/>
+  <img src="./docs/img/anomaly_trend_analysis.png" alt="Analytics Panel" width="90%" style="border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);" />
 </p>
 
 ---
