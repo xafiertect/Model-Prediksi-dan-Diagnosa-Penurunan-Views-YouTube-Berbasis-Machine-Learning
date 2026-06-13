@@ -223,7 +223,8 @@ body {
 .badge-green  { background: rgba(16,185,129,0.12); color: var(--accent-green); border: 1px solid rgba(16,185,129,0.25); }
 .badge-red    { background: rgba(239,68,68,0.12);  color: var(--accent-red);   border: 1px solid rgba(239,68,68,0.25); }
 .badge-cyan   { background: rgba(255,122,89,0.12);  color: var(--accent-cyan);  border: 1px solid rgba(255,122,89,0.25); }
-.badge-yellow { background: rgba(245,158,11,0.12); color: var(--accent-gold);  border: 1px solid rgba(245,158,11,0.25); }
+.badge-yellow  { background: rgba(245,158,11,0.12);  color: var(--accent-gold);  border: 1px solid rgba(245,158,11,0.25); }
+.badge-purple  { background: rgba(167,139,250,0.12); color: #A78BFA;             border: 1px solid rgba(167,139,250,0.25); }
 
 /* ── Input ── */
 .input-dark {
@@ -322,6 +323,29 @@ body {
 
 .animate-spin-slow {
   animation: spin 8s linear infinite;
+}
+
+/* ---- Top Navbar Shell & Nav ---- */
+.nav-shell {
+  position: sticky;
+  top: 14px;
+  z-index: 100;
+  padding: 0 28px;
+}
+.nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 13px 18px 13px 16px;
+  border-radius: 22px;
+  background: var(--bg-sidebar);
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
 /* ---- Top Navbar Specific Styles ---- */

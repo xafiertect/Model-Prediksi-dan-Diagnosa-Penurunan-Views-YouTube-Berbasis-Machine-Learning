@@ -92,7 +92,7 @@ export default function App() {
 
               {/* Main content wrapper */}
               <main className="wrap" style={{
-                paddingTop: '2.5rem',
+                paddingTop: '5rem',
                 paddingBottom: '80px',
                 position: 'relative',
                 zIndex: 10
